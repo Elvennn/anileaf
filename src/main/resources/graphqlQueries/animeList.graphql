@@ -1,0 +1,23 @@
+query animeList($userName: String) {
+  MediaListCollection(userName: $userName, type: ANIME) {
+    user {
+      id
+    }
+    lists {
+      status
+      entries {
+        ...mediaListFragment
+      }
+    }
+  }
+}
+
+fragment mediaListFragment on MediaList {
+  id
+  progress
+  media {
+    title {
+      romaji(stylised: true)
+    }
+  }
+}
