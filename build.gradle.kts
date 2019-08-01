@@ -15,6 +15,8 @@ repositories {
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
     testCompile("junit", "junit", "4.12")
+    compile("com.fasterxml.jackson.module:jackson-module-kotlin:2.9.+")
+    compile("com.jayway.jsonpath:json-path:2.4.0")
 }
 
 configure<JavaPluginConvention> {
