@@ -13,9 +13,9 @@ query animeList($userName: String) {
 }
 
 fragment mediaListFragment on MediaList {
-  id
   progress
   media {
+    id
     title {
       romaji(stylised: true)
     }

@@ -6,13 +6,12 @@ import io.elven.anilist.Anilist
 import io.elven.utils.getResourceAsText
 
 fun main(args: Array<String>) {
-    val token = getResourceAsText("token") ?: throw error(" NO TOKEN AVAILABLE")
+    val token = getResourceAsText("token")
     val anilist = Anilist("Elvenn", token)
-    println(anilist.getAnimeGenres("Kiseijuu"))
-    val animeList = anilist.getAnimeList()
-    println(animeList)
-
-    val watchingList: List<AniEntry> = (Parser.default().parse(StringBuilder(animeList)) as JsonObject)
+    anilist.updateAnime(21, 898)
+    val animeListResponse = anilist.getAnimeList()
+    val parser = Parser.default()
+    val watchingList: List<AniEntry> = (parser.parse(StringBuilder(animeListResponse)) as JsonObject)
         .lookup<JsonArray<JsonObject>>("data.MediaListCollection.lists")[0]
         .filter { it.string("status") == "CURRENT" }[0]
         .array<JsonObject>("entries")!!

@@ -5,6 +5,7 @@ class Anilist(private val userName: String, private val token: String) {
     private val ANILIST_API_URL = "https://graphql.anilist.co/"
 
     fun get(query: GraphqlQuery): String {
+//        println("${query.queryType} ${query.getQueryString()}")
         return Graphql.query(ANILIST_API_URL, query, token)
     }
 
@@ -17,8 +18,12 @@ class Anilist(private val userName: String, private val token: String) {
         )
     }
 
-    fun getAnimeGenres(anime: String): String {
-        val query = """{ Media(search: \"$anime\") {genres,title {romaji}}}"""
-        return Graphql.query(ANILIST_API_URL, query)
+    fun updateAnime(mediaId: Int, prgoress: Int) {
+        get(
+            GraphqlQuery(
+                QueryType.UPDATE_LIST,
+                arrayOf(Pair("mediaId", mediaId), Pair("progress", prgoress))
+            )
+        )
     }
 }

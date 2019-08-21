@@ -1,5 +1,6 @@
 package io.elven.utils
 
+import java.lang.Exception
 import java.net.URL
 
 private object Utils {
@@ -7,6 +8,6 @@ private object Utils {
         return javaClass.classLoader.getResource(path)
     }
 }
-fun getResourceAsText(path: String): String? {
-    return Utils.getResourceURL(path)?.readText()
+fun getResourceAsText(path: String): String {
+    return Utils.getResourceURL(path)?.readText() ?: throw Exception("Cannot get $path")
 }
