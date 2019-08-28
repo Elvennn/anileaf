@@ -10,13 +10,13 @@ version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
-    jcenter()
 }
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
     testCompile("junit", "junit", "4.12")
-    compile("com.beust:klaxon:5.0.1")
+    compile("com.jayway.jsonpath", "json-path" ,"2.4.0")
+    runtime("com.fasterxml.jackson.core:jackson-databind:2.4.5")
 }
 
 configure<JavaPluginConvention> {
