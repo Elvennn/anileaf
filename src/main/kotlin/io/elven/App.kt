@@ -22,15 +22,12 @@ fun main(args: Array<String>) {
     val token = getResourceAsText("token")
     val anilist = Anilist("Elvenn", token)
     val currentList = anilist.getAnimeCurrentList()
-
     val rssUrl = URL("https://nyaa.si/rss?q=vostfr")
     val serializer = Persister()
 
     val feed = serializer.read(TorrentFeed::class.java, rssUrl.readText(), false)
-    
+
     val torrentAnimeFiles = feed.torrents.map { AnimeFile.fromAnitomy(AnitomyJ.parse(it.title)) }
-    val animeToDL = currentList.filter { animeListEntry ->
-        torrentAnimeFiles.filter { it.title?.contains(animeListEntry.media.title.romaji) ?: false }.any()
-    }
+    val animeToDL = currentList.filter { animeListEntry -> torrentAnimeFiles.filter { it.title?.contains(animeListEntry.media.title.romaji) ?: false }.any()}
     println(animeToDL.map { it.media.title.romaji }.joinToString())
 }
