@@ -17,7 +17,6 @@ object Graphql {
             .uri(URI.create(url))
             .setHeader("Content-Type", "application/json")
         requestBuilder.POST(HttpRequest.BodyPublishers.ofString("""{"query": "$query", "variables": $variables}"""))
-
         if (token != null) requestBuilder.setHeader("Authorization", "Bearer $token")
         val request = requestBuilder.build()
         return httpClient.send(request, HttpResponse.BodyHandlers.ofString()).body()

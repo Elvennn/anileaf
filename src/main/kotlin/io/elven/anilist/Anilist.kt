@@ -7,6 +7,7 @@ import com.jayway.jsonpath.spi.json.JacksonJsonProvider
 import com.jayway.jsonpath.spi.json.JsonProvider
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider
 import com.jayway.jsonpath.spi.mapper.MappingProvider
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.util.*
 
@@ -15,8 +16,10 @@ class Anilist(private val userName: String, private val token: String) {
     private val ANILIST_API_URL = "https://graphql.anilist.co/"
 
     fun get(query: GraphqlQuery): String {
-        logger.debug("${query.queryType} ${query.getQueryString()}")
-        return Graphql.query(ANILIST_API_URL, query, token)
+        logger.debug("${query.queryType} ${query.getQueryString().replace("\r", "")}")
+        val response = Graphql.query(ANILIST_API_URL, query, token)
+        logger.debug(response)
+        return response
     }
 
     fun getAnimeCurrentList(): Array<AniEntry> {
@@ -43,8 +46,11 @@ class Anilist(private val userName: String, private val token: String) {
 
 
     companion object {
-        private val logger = LoggerFactory.getLogger(Anilist::class.java)
+        private var logger: Logger
+
         init {
+            System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "INFO")
+            logger = LoggerFactory.getLogger(Anilist::class.java)
             Configuration.setDefaults(object : Configuration.Defaults {
 
                 private val jsonProvider = JacksonJsonProvider()
