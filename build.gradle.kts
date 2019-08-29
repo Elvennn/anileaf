@@ -15,6 +15,9 @@ repositories {
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
     testCompile("junit", "junit", "4.12")
+    compile("com.jayway.jsonpath", "json-path" ,"2.4.0")
+    runtime("com.fasterxml.jackson.core:jackson-databind:2.4.5")
+    compile("org.slf4j", "slf4j-simple", "1.7.28")
 }
 
 configure<JavaPluginConvention> {

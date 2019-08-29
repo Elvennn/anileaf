@@ -45,3 +45,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### Anileaf ###
+src/main/resources/token
