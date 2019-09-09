@@ -13,7 +13,6 @@ import java.util.*
 
 
 class Anilist(private val userName: String, private val token: String) {
-    private val ANILIST_API_URL = "https://graphql.anilist.co/"
 
     fun get(query: GraphqlQuery): String {
         logger.debug("${query.queryType} ${query.getQueryString().replace("\r", "")}")
@@ -35,11 +34,11 @@ class Anilist(private val userName: String, private val token: String) {
         )[0]
     }
 
-    fun updateAnime(media: AniMedia, prgoress: Int) {
+    fun updateAnime(media: AniMedia, progress: Int) {
         get(
             GraphqlQuery(
                 QueryType.UPDATE_LIST,
-                arrayOf(Pair("mediaId", media.id), Pair("progress", prgoress))
+                arrayOf(Pair("mediaId", media.id), Pair("progress", progress))
             )
         )
     }
@@ -47,7 +46,7 @@ class Anilist(private val userName: String, private val token: String) {
 
     companion object {
         private var logger: Logger
-
+        private const val ANILIST_API_URL = "https://graphql.anilist.co/"
         init {
             System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "INFO")
             logger = LoggerFactory.getLogger(Anilist::class.java)
