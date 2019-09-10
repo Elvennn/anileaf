@@ -10,6 +10,7 @@ version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
+    jcenter()
 }
 
 dependencies {
@@ -20,11 +21,4 @@ dependencies {
     compile("org.slf4j", "slf4j-simple", "1.7.28")
     compile("org.simpleframework", "simple-xml", "2.7.1")
     compile("com.dgtlrepublic", "anitomyJ", "0.0.7")
-}
-
-configure<JavaPluginConvention> {
-    sourceCompatibility = JavaVersion.VERSION_11
-}
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "12"
 }
