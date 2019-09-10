@@ -7,6 +7,7 @@ import org.simpleframework.xml.core.Persister
 import java.net.URL
 import com.dgtlrepublic.anitomyj.AnitomyJ
 import io.elven.anitomy.AnimeFile
+import io.elven.settings.AnileafSettings
 
 fun animelistfetch() {
     val token = getResourceAsText("token")

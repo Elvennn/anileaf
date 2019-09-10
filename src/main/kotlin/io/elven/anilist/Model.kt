@@ -8,4 +8,4 @@ data class AniMedia(val id: Int = -1, val title: AniTitle = AniTitle()) {
     }
 }
 
-data class AniTitle(val romaji: String = "")
+data class AniTitle(val romaji: String = "", val english: String = "")
