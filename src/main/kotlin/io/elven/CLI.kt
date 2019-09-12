@@ -1,20 +1,20 @@
 package io.elven
 
+import com.dgtlrepublic.anitomyj.AnitomyJ
 import io.elven.anilist.AniEntry
+import io.elven.anilist.Anilist
+import io.elven.anitomy.AnimeFile
+import io.elven.settings.AnileafInternalData
+import io.elven.settings.AnileafSettings
+import java.awt.Desktop
+import java.io.File
+import java.nio.file.Files
 
-class CLI {
-    private val args: Array<String>
-    private val animeList: Array<AniEntry>
+class CLI(private val args: Array<String>, private val animeList: Array<AniEntry>) {
 
-    constructor(args: Array<String>) {
-        this.args = args
-        // TODO get current list from disk
-        animeList = emptyArray()
-    }
-
-
+    // TODO test this
     fun play() {
-        val animeArg: String? = args.getOrNull(2)
+        val animeArg: String? = args.getOrNull(1)
         val animeEntry = if (animeArg.isNullOrBlank()) {
             // TODO anime choice in list
             throw NotImplementedError()
@@ -22,25 +22,40 @@ class CLI {
             parseAnimeArg(animeArg)
         }
         val progress = animeEntry.progress
-        // TODO look for anime file in path & open it
-
+        val animeFile = File("${AnileafSettings.settings.pathToAnimes}/${animeEntry.media.title.romaji}")
+            .listFiles()
+            ?.first { AnimeFile.fromAnitomy(AnitomyJ.parse(it.name)).episode == animeEntry.progress }
+        if (animeFile == null) {
+            print("No video files for ${animeEntry.media.title.romaji} episode ${animeEntry.progress}.")
+            return
+        }
+        Desktop.getDesktop().open(animeFile)
     }
 
+    // TODO Test this
     fun list() {
         println(
             animeList.joinToString("\n") {
-                "${it.media.title.romaji}\t\t\t${it.progress}\t/\t?"
-                // TODO replace with total episode count
+                "${it.media.title.romaji}\t\t\t${it.progress}\t/\t${it.media.episodes}"
             }
         )
     }
 
+    // TODO Test this
     fun update() {
         val animeArg: String = args.getOrNull(2) ?: throw NoSuchElementException("Missing anime title argument")
         val progress: Int = args.getOrNull(3)?.toInt()  ?: throw NoSuchElementException("Missing anime progress argument")
 
-        // TODO have an initialized anilist
-        // anilist.updateAnime(parseAnimeArg(animeArg), progress)
+        Anilist.updateAnime(parseAnimeArg(animeArg).media, progress)
+    }
+
+    fun sync() {
+        AnileafInternalData.data.animeList = Anilist.getAnimeCurrentList()
+        AnileafInternalData.save()
+    }
+
+    fun init() {
+        File(AnileafSettings.path).mkdir()
     }
 
     private fun parseAnimeArg(animeArg: String): AniEntry {
@@ -49,17 +64,17 @@ class CLI {
 }
 
 fun main(args: Array<String>) {
-    println(args.joinToString()) // TODO check if first or second in args array
-
     if (args.isEmpty()) {
         return
     }
-    val cli = CLI(args)
-    when (args[1]) {
+    val cli = CLI(args, AnileafInternalData.data.animeList)
+    when (args[0]) {
         "list" -> cli.list()
         "update" -> cli.update()
         "play" -> cli.play()
-        else -> throw NoSuchElementException("Wrong cli mode [$args[1]")
+        "init" -> cli.init()
+        "sync" -> cli.sync()
+        else -> throw NoSuchElementException("Wrong cli mode [$args[0]")
     }
 }
 

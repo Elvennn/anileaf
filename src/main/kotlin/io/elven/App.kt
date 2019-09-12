@@ -11,8 +11,7 @@ import io.elven.settings.AnileafSettings
 
 fun animelistfetch() {
     val token = getResourceAsText("token")
-    val anilist = Anilist("Elvenn", token)
-    val currentList = anilist.getAnimeCurrentList()
+    val currentList = Anilist.getAnimeCurrentList()
 
 //    anilist.updateAnime(currentList[0].media, 898)
 
@@ -20,9 +19,7 @@ fun animelistfetch() {
 }
 
 fun main(args: Array<String>) {
-    val token = getResourceAsText("token")
-    val anilist = Anilist("Elvenn", token)
-    val currentList = anilist.getAnimeCurrentList()
+    val currentList = Anilist.getAnimeCurrentList()
     val rssUrl = URL("https://nyaa.si/rss?q=vostfr")
     val serializer = Persister()
 
