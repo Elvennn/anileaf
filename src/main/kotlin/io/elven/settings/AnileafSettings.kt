@@ -21,12 +21,14 @@ object AnileafSettings {
         }
         settings = mapper.readValue<Settings>(settingsFile.readText())
     }
-
+    fun save () {
+        settingsFile.writeText(mapper.writeValueAsString(settings))
+    }
 }
 
 data class Settings(
-    val anilistUserName: String,
-    val anilistToken: String,
+    var anilistUserName: String,
+    var anilistToken: String,
     val syncFrequency: Int = 3000,
     val pathToAnimes: String = "",
     val pathToTorrentFiles: String = "",

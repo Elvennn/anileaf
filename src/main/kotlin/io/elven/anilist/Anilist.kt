@@ -34,9 +34,8 @@ object Anilist {
                 arrayOf(Pair("userName", userName))
             )
         )
-        return JsonPath.parse(response).read(
-            """$..lists[?(@.status == 'CURRENT')].entries""",
-            Array<Array<AniEntry>>::class.java
+        return JsonPath.parse(response).read<Array<Array<AniEntry>>>(
+            """$..lists[?(@.status == 'CURRENT')].entries"""
         )[0]
     }
 
