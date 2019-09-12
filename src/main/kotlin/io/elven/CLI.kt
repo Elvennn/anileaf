@@ -98,8 +98,7 @@ class CLI(private val args: Array<String>, private val animeList: Array<AniEntry
         throw NotImplementedError()
     }
 
-    private fun parseAnimeArg(animeArg: String): AniEntry {
-
+    private fun parseAnimeArg(animeArg: String): AniEntry 
         return animeList.maxBy { it.media.title.match(animeArg) }
             ?: throw NoSuchElementException("Unable to find any currently watching anime for [$animeArg]")
     }
