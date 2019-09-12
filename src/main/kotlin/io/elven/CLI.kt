@@ -2,7 +2,6 @@ package io.elven
 
 import com.dgtlrepublic.anitomyj.AnitomyJ
 import com.jayway.jsonpath.JsonPath
-import com.sun.jndi.toolkit.url.Uri
 import io.elven.anilist.AniEntry
 import io.elven.anilist.Anilist
 import io.elven.anilist.AnilistApp
@@ -11,6 +10,7 @@ import io.elven.anitomy.AnimeFile
 import io.elven.settings.AnileafInternalData
 import io.elven.settings.AnileafSettings
 import io.elven.settings.Settings
+import me.xdrop.fuzzywuzzy.FuzzySearch
 import java.awt.Desktop
 import java.io.File
 import java.net.URI
@@ -99,7 +99,8 @@ class CLI(private val args: Array<String>, private val animeList: Array<AniEntry
     }
 
     private fun parseAnimeArg(animeArg: String): AniEntry {
-        return animeList.minBy { it.media.title.romaji.contains(animeArg, true) }
+
+        return animeList.maxBy { it.media.title.match(animeArg) }
             ?: throw NoSuchElementException("Unable to find any currently watching anime for [$animeArg]")
     }
 }
