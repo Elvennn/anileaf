@@ -7,15 +7,21 @@ import com.jayway.jsonpath.spi.json.JacksonJsonProvider
 import com.jayway.jsonpath.spi.json.JsonProvider
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider
 import com.jayway.jsonpath.spi.mapper.MappingProvider
+import io.elven.settings.AnileafSettings
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.util.*
 
 
-class Anilist(private val userName: String, private val token: String) {
+object Anilist {
+    private val userName: String = AnileafSettings.settings.anilistUserName
+    private val token: String = AnileafSettings.settings.anilistToken
+    private var logger: Logger
+
+    private const val ANILIST_API_URL = "https://graphql.anilist.co/"
 
     fun get(query: GraphqlQuery): String {
-        logger.debug("${query.queryType} ${query.getQueryString().replace("\r", "")}")
+        logger.debug("${query.queryType} ${query.getQueryString()}")
         val response = Graphql.query(ANILIST_API_URL, query, token)
         logger.debug(response)
         return response
@@ -28,9 +34,8 @@ class Anilist(private val userName: String, private val token: String) {
                 arrayOf(Pair("userName", userName))
             )
         )
-        return JsonPath.parse(response).read(
-            """$..lists[?(@.status == 'CURRENT')].entries""",
-            Array<Array<AniEntry>>::class.java
+        return JsonPath.parse(response).read<Array<Array<AniEntry>>>(
+            """$..lists[?(@.status == 'CURRENT')].entries"""
         )[0]
     }
 
@@ -43,31 +48,26 @@ class Anilist(private val userName: String, private val token: String) {
         )
     }
 
+    init {
+        System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "DEBUG")
+        logger = LoggerFactory.getLogger(Anilist::class.java)
+        Configuration.setDefaults(object : Configuration.Defaults {
 
-    companion object {
-        private var logger: Logger
-        private const val ANILIST_API_URL = "https://graphql.anilist.co/"
-        init {
-            System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "INFO")
-            logger = LoggerFactory.getLogger(Anilist::class.java)
-            Configuration.setDefaults(object : Configuration.Defaults {
+            private val jsonProvider = JacksonJsonProvider()
+            private val mappingProvider = JacksonMappingProvider()
 
-                private val jsonProvider = JacksonJsonProvider()
-                private val mappingProvider = JacksonMappingProvider()
-
-                override fun jsonProvider(): JsonProvider {
-                    return jsonProvider
-                }
+            override fun jsonProvider(): JsonProvider {
+                return jsonProvider
+            }
 
 
-                override fun mappingProvider(): MappingProvider {
-                    return mappingProvider
-                }
+            override fun mappingProvider(): MappingProvider {
+                return mappingProvider
+            }
 
-                override fun options(): Set<Option> {
-                    return EnumSet.noneOf(Option::class.java)
-                }
-            })
-        }
+            override fun options(): Set<Option> {
+                return EnumSet.noneOf(Option::class.java)
+            }
+        })
     }
 }

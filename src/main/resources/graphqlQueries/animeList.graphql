@@ -16,6 +16,7 @@ fragment mediaListFragment on MediaList {
   progress
   media {
     id
+    episodes
     title {
       romaji(stylised: true)
     }

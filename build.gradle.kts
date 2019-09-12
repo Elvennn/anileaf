@@ -9,6 +9,7 @@ group = "io.elven"
 version = "1.0-SNAPSHOT"
 
 repositories {
+    jcenter()
     mavenCentral()
 }
 
@@ -20,4 +21,5 @@ dependencies {
     compile("org.slf4j", "slf4j-simple", "1.7.28")
     compile("org.simpleframework", "simple-xml", "2.7.1")
     compile("com.dgtlrepublic", "anitomyJ", "0.0.7")
+    compile("me.xdrop", "fuzzywuzzy","1.2.0")
 }
