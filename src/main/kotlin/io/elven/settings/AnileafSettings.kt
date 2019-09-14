@@ -35,12 +35,7 @@ data class Settings(
     val torrentRSSFeed: String = "",
     val minVideoQuality: String = "",
     val animeSettings: Array<AnimeSettings> = emptyArray()
-) {
-
-    companion object {
-
-    }
-}
+)
 
 data class AnimeSettings(
     val aniID: Int,

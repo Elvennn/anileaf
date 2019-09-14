@@ -1,5 +1,6 @@
 package io.elven.torrent
 
+import io.elven.anitomy.AnimeFile
 import org.simpleframework.xml.Element
 import org.simpleframework.xml.ElementList
 import org.simpleframework.xml.Path
@@ -15,4 +16,12 @@ data class TorrentFeed(
 )
 
 @Root
-data class TorrentEntry(@field:Element var title: String = "", @field:Element var link: String = "")
+data class TorrentEntry(
+    @field:Element var link: String = "",
+    @field:Element(name = "title") var fileName: String = "",
+    var animeFile: AnimeFile? = null
+) {
+    fun computeAnimeFile() {
+        animeFile = AnimeFile.fromFileName(fileName)
+    }
+}

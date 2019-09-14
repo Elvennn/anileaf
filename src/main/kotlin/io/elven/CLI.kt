@@ -30,7 +30,7 @@ class CLI(private val args: Array<String>, private val animeList: Array<AniEntry
         } else {
             parseAnimeArg(animeArg)
         }
-        val progress = animeEntry.progress
+
         val animeFile = File("${AnileafSettings.settings.pathToAnimes}/${animeEntry.media.title.romaji}")
             .listFiles()
             ?.first { AnimeFile.fromAnitomy(AnitomyJ.parse(it.name)).episode == animeEntry.progress }
@@ -60,8 +60,7 @@ class CLI(private val args: Array<String>, private val animeList: Array<AniEntry
     }
 
     fun sync() {
-        AnileafInternalData.data.animeList = Anilist.getAnimeCurrentList()
-        AnileafInternalData.save()
+        Anilist.sync()
     }
 
     // TODO Test this

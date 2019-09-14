@@ -7,6 +7,7 @@ import com.jayway.jsonpath.spi.json.JacksonJsonProvider
 import com.jayway.jsonpath.spi.json.JsonProvider
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider
 import com.jayway.jsonpath.spi.mapper.MappingProvider
+import io.elven.settings.AnileafInternalData
 import io.elven.settings.AnileafSettings
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -20,22 +21,28 @@ object Anilist {
 
     private const val ANILIST_API_URL = "https://graphql.anilist.co/"
 
-    fun get(query: GraphqlQuery): String {
+    fun sync() {
+        AnileafInternalData.data.animeList = getAnimeCurrentList()
+        AnileafInternalData.save()
+    }
+
+    private fun get(query: GraphqlQuery): String {
         logger.debug("${query.queryType} ${query.getQueryString()}")
         val response = Graphql.query(ANILIST_API_URL, query, token)
         logger.debug(response)
         return response
     }
 
-    fun getAnimeCurrentList(): Array<AniEntry> {
+    private fun getAnimeCurrentList(): Array<AniEntry> {
         val response = get(
             GraphqlQuery(
                 QueryType.ANIME_LIST,
                 arrayOf(Pair("userName", userName))
             )
         )
-        return JsonPath.parse(response).read<Array<Array<AniEntry>>>(
-            """$..lists[?(@.status == 'CURRENT')].entries"""
+        return JsonPath.parse(response).read(
+            """$..lists[?(@.status == 'CURRENT')].entries""",
+            Array<Array<AniEntry>>::class.java
         )[0]
     }
 

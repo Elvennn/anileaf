@@ -15,11 +15,11 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
-    testCompile("junit", "junit", "4.12")
-    compile("com.jayway.jsonpath", "json-path" ,"2.4.0")
-    compile("com.fasterxml.jackson.module", "jackson-module-kotlin", "2.9.+")
-    compile("org.slf4j", "slf4j-simple", "1.7.28")
-    compile("org.simpleframework", "simple-xml", "2.7.1")
-    compile("com.dgtlrepublic", "anitomyJ", "0.0.7")
-    compile("me.xdrop", "fuzzywuzzy","1.2.0")
+    testImplementation("junit", "junit", "4.12")
+    implementation("com.jayway.jsonpath", "json-path" ,"2.4.0")
+    implementation("com.fasterxml.jackson.module", "jackson-module-kotlin", "2.9.+")
+    implementation("org.slf4j", "slf4j-simple", "1.7.28")
+    implementation("org.simpleframework", "simple-xml", "2.7.1")
+    implementation("com.dgtlrepublic", "anitomyJ", "0.0.7")
+    implementation("me.xdrop", "fuzzywuzzy","1.2.0")
 }
