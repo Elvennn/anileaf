@@ -20,7 +20,7 @@ object AnileafInternalData {
         if (!dataFile.exists()) {
             dataFile.writeText(mapper.writeValueAsString(InternalData()))
         }
-        data = mapper.readValue<InternalData>(dataFile)
+        data = mapper.readValue(dataFile)
     }
 
     fun save() {
@@ -30,5 +30,6 @@ object AnileafInternalData {
 
 data class InternalData(
     var lastUpdate: Long = LocalDate.now().toEpochDay(),
-    var animeList: Array<AniEntry> = emptyArray()
+    var animeList: Array<AniEntry> = emptyArray(),
+    var animeDownloadState: MutableMap<Int, MutableSet<Int>> = mutableMapOf()
 )

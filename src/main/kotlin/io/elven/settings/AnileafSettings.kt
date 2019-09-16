@@ -16,10 +16,15 @@ object AnileafSettings {
     init {
         mapper.enable(SerializationFeature.INDENT_OUTPUT)
         if (!settingsFile.exists()) {
-            File(AnileafSettings.path).mkdir()
+            File(path).mkdir()
             settingsFile.writeText(mapper.writeValueAsString(Settings("", "")))
         }
         settings = mapper.readValue<Settings>(settingsFile.readText())
+
+        val torrentDir = File(settings.pathToTorrentFiles)
+        if (!torrentDir.exists()) {
+            torrentDir.mkdir()
+        }
     }
     fun save () {
         settingsFile.writeText(mapper.writeValueAsString(settings))
@@ -31,7 +36,7 @@ data class Settings(
     var anilistToken: String,
     val syncFrequency: Int = 3000,
     val pathToAnimes: String = "",
-    val pathToTorrentFiles: String = "",
+    val pathToTorrentFiles: String = "${AnileafSettings.path}/torrentFiles",
     val torrentRSSFeed: String = "",
     val minVideoQuality: String = "",
     val animeSettings: Array<AnimeSettings> = emptyArray()
