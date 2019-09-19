@@ -22,7 +22,6 @@ import java.nio.file.Files
 import java.io.InputStream
 
 
-
 fun main(args: Array<String>) {
     syncTask()
 //    fixedRateTimer(period = AnileafSettings.settings.syncFrequency.toLong() * 1000) {
@@ -43,7 +42,8 @@ fun syncTask() {
         val currentList = AnileafInternalData.data.animeList
         val animeTorrentToDL = animeTorrentToDownload(currentList)
         animeTorrentToDL.forEach { (anime, torrent) ->
-            val dowloadedAnimeState = AnileafInternalData.data.animeDownloadState.getOrPut(anime.media.id) { mutableSetOf() }
+            val dowloadedAnimeState =
+                AnileafInternalData.data.animeDownloadState.getOrPut(anime.media.id) { mutableSetOf() }
             if (!dowloadedAnimeState.contains(torrent.animeFile!!.episode)) {
                 val torrentFilePath = "${AnileafSettings.settings.pathToTorrentFiles}/${torrent.fileName}.torrent"
                 val inputStream = URL(torrent.link).openStream()
@@ -66,7 +66,7 @@ fun syncTask() {
 }
 
 fun animeTorrentToDownload(currentList: Array<AniEntry>): List<Pair<AniEntry, TorrentEntry>> {
-    val rssUrl = URL("https://nyaa.si/rss?q=vostfr")
+    val rssUrl = URL("https://nyaa.si/rss?q=vostfr") // TODO get from settings
     val serializer = Persister()
     val feed = serializer.read(TorrentFeed::class.java, rssUrl.readText(), false)
     feed.torrents.forEach { it.computeAnimeFile() }
@@ -96,8 +96,8 @@ fun animeTorrentToDownload(currentList: Array<AniEntry>): List<Pair<AniEntry, To
         }
         // filter for video quality
         .filter { (_, torrent) ->
-            torrent.animeFile?.quality?.contains(AnileafSettings.settings.minVideoQuality) ?: false
-        } // TODO better match for video quality
+            AnileafSettings.settings.minVideoQuality.any { it == torrent.animeFile?.quality ?: "" }
+        }
         // filter for fansub settings
         .filter { (anime, torrent) ->
             val prefFansub =

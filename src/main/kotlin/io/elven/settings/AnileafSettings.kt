@@ -6,7 +6,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 
 object AnileafSettings {
-    val path: String = "${System.getProperty("user.home")}/.anileaf"
+    val path: String = "${System.getProperty("user.home")}/.config/anileaf"
     val settings: Settings
 
     private const val settingsFileName: String = "settings.json"
@@ -19,7 +19,7 @@ object AnileafSettings {
             File(path).mkdir()
             settingsFile.writeText(mapper.writeValueAsString(Settings("", "")))
         }
-        settings = mapper.readValue<Settings>(settingsFile.readText())
+        settings = mapper.readValue(settingsFile.readText())
 
         val torrentDir = File(settings.pathToTorrentFiles)
         if (!torrentDir.exists()) {
@@ -38,7 +38,7 @@ data class Settings(
     val pathToAnimes: String = "",
     val pathToTorrentFiles: String = "${AnileafSettings.path}/torrentFiles",
     val torrentRSSFeed: String = "",
-    val minVideoQuality: String = "",
+    val minVideoQuality: Array<String> = emptyArray(),
     val animeSettings: Array<AnimeSettings> = emptyArray()
 )
 
