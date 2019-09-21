@@ -20,6 +20,8 @@ import java.nio.file.StandardCopyOption
 import java.nio.file.Paths
 import java.nio.file.Files
 import java.io.InputStream
+import java.util.concurrent.TimeUnit
+import kotlin.streams.toList
 
 
 fun main(args: Array<String>) {
@@ -41,18 +43,16 @@ fun syncTask() {
         Anilist.sync()
         val currentList = AnileafInternalData.data.animeList
         val animeTorrentToDL = animeTorrentToDownload(currentList)
+        if (!animeTorrentToDL.isEmpty()) {
+            startTransmission()
+        }
         animeTorrentToDL.forEach { (anime, torrent) ->
             val dowloadedAnimeState =
-                AnileafInternalData.data.animeDownloadState.getOrPut(anime.media.id) { mutableSetOf() }
+                AnileafInternalData.animeDownloadState.getOrPut(anime.media.id) { mutableSetOf() }
             if (!dowloadedAnimeState.contains(torrent.animeFile!!.episode)) {
-                val torrentFilePath = "${AnileafSettings.settings.pathToTorrentFiles}/${torrent.fileName}.torrent"
-                val inputStream = URL(torrent.link).openStream()
-                Files.copy(
-                    inputStream,
-                    Paths.get(torrentFilePath),
-                    StandardCopyOption.REPLACE_EXISTING
-                )
-                // TODO download torrent file
+                val cmd = arrayOf("sh", "-c", "transmission-remote -ne -a ${torrent.link} -w '${AnileafSettings.settings.pathToAnimes}/${anime.media.title.romaji}/'")
+                Runtime.getRuntime().exec(cmd, null, null)
+                // TODO send notification
                 dowloadedAnimeState.add(torrent.animeFile!!.episode)
             }
         }
@@ -61,16 +61,23 @@ fun syncTask() {
     } catch (e: Exception) {
         // TODO Error when unable to get
         e.printStackTrace()
-        exitProcess(0)
+        exitProcess(1)
+    }
+}
+
+fun startTransmission() {
+    val process = ProcessBuilder("lsof", "-i:9091").start()
+    process.waitFor(10, TimeUnit.SECONDS)
+    if (process.exitValue() != 0) {
+        ProcessBuilder("transmission-daemon").start()
     }
 }
 
 fun animeTorrentToDownload(currentList: Array<AniEntry>): List<Pair<AniEntry, TorrentEntry>> {
-    val rssUrl = URL("https://nyaa.si/rss?q=vostfr") // TODO get from settings
     val serializer = Persister()
-    val feed = serializer.read(TorrentFeed::class.java, rssUrl.readText(), false)
+    val feed = serializer.read(TorrentFeed::class.java, URL(AnileafSettings.settings.torrentRSSFeed).readText(), false)
     feed.torrents.forEach { it.computeAnimeFile() }
-    return feed.torrents.asSequence()
+    return feed.torrents
         // filter for watching animes
         .mapNotNull { entry ->
             val matchedAnime =
@@ -83,14 +90,14 @@ fun animeTorrentToDownload(currentList: Array<AniEntry>): List<Pair<AniEntry, To
             }
         }
         // filter for needed episodes
-        .filter { (anime, torrent) -> anime.progress < torrent.animeFile?.episode ?: -1 }
+        .filter { (anime, torrent) -> anime.progress < torrent.animeFile!!.episode }
         // filter for episode not downloded already
         .filter { (anime, torrent) ->
             val animeFolder = File("${AnileafSettings.settings.pathToAnimes}/${anime.media.title.romaji}")
             if (animeFolder.exists()) {
                 animeFolder.listFiles()
-                    ?.any { AnimeFile.fromFileName(it.name)?.episode == torrent.animeFile?.episode }
-                    ?: false
+                    ?.none { AnimeFile.fromFileName(it.name)?.episode == torrent.animeFile?.episode }
+                    ?: true
             } else
                 true
         }

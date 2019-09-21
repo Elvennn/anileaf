@@ -9,6 +9,7 @@ import java.time.LocalDate
 
 object AnileafInternalData {
     val data: InternalData
+    val animeDownloadState: MutableMap<Int, MutableSet<Int>> = mutableMapOf()
 
     private const val dataFileName = "internal_data.json"
     private val mapper = jacksonObjectMapper()
@@ -30,6 +31,5 @@ object AnileafInternalData {
 
 data class InternalData(
     var lastUpdate: Long = LocalDate.now().toEpochDay(),
-    var animeList: Array<AniEntry> = emptyArray(),
-    var animeDownloadState: MutableMap<Int, MutableSet<Int>> = mutableMapOf()
+    var animeList: Array<AniEntry> = emptyArray()
 )

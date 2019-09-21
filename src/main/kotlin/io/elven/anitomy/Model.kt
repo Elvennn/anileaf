@@ -10,7 +10,7 @@ data class AnimeFile(val title: String, val episode: Int = 0, val quality: Strin
             return AnimeFile(
                 fileParts[Element.ElementCategory.kElementAnimeTitle]
                     ?: error("Cannot get title from [${anitomyElements.joinToString { "${it.category}:${it.value}" }}]"),
-                fileParts[Element.ElementCategory.kElementEpisodeNumber]?.toInt() ?: 0,
+                fileParts[Element.ElementCategory.kElementEpisodeNumber]?.toIntOrNull() ?: 0,
                 fileParts[Element.ElementCategory.kElementVideoResolution],
                 fileParts[Element.ElementCategory.kElementReleaseGroup]
             )
