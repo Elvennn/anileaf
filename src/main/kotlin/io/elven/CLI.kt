@@ -5,19 +5,15 @@ import com.jayway.jsonpath.JsonPath
 import io.elven.anilist.AniEntry
 import io.elven.anilist.Anilist
 import io.elven.anilist.AnilistApp
-import io.elven.anilist.Graphql
 import io.elven.anitomy.AnimeFile
 import io.elven.settings.AnileafInternalData
 import io.elven.settings.AnileafSettings
-import io.elven.settings.Settings
-import me.xdrop.fuzzywuzzy.FuzzySearch
 import java.awt.Desktop
 import java.io.File
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
-import java.nio.file.Files
 
 class CLI(private val args: Array<String>, private val animeList: Array<AniEntry>) {
 
@@ -63,17 +59,16 @@ class CLI(private val args: Array<String>, private val animeList: Array<AniEntry
         Anilist.sync()
     }
 
-    // TODO Test this
     fun init() {
         print("Anilist.co username : ")
         val userName = readLine()!!
 
-        Desktop.getDesktop().browse(URI(AnilistApp.redirectUrl))
-        print("Use the openned link to generate code and paste it here : ")
+        Desktop.getDesktop().browse(URI(AnilistApp.codeGenUrl))
+        print("Use the opened link to generate code and paste it here : ")
         val code = readLine()!!
 
         val request = HttpRequest.newBuilder()
-            .uri(URI.create(AnilistApp.codeGenUrl))
+            .uri(URI.create("https://anilist.co/api/v2/oauth/token"))
             .setHeader("Content-Type", "application/json")
             .setHeader("Accept", "application/json")
             .POST(
@@ -94,7 +89,6 @@ class CLI(private val args: Array<String>, private val animeList: Array<AniEntry
         AnileafSettings.settings.anilistToken = accessToken
         AnileafSettings.settings.anilistUserName = userName
         AnileafSettings.save()
-        throw NotImplementedError()
     }
 
     private fun parseAnimeArg(animeArg: String): AniEntry {

@@ -56,7 +56,7 @@ object Anilist {
     }
 
     init {
-        System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "DEBUG")
+        System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "INFO")
         logger = LoggerFactory.getLogger(Anilist::class.java)
         Configuration.setDefaults(object : Configuration.Defaults {
 
