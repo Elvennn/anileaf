@@ -37,7 +37,7 @@ fun main(args: Array<String>) {
 
 fun syncTask() {
     // TODO check for torrents & download
-    // TODO maybe use the nextAiringEpisode in anilist media
+    // TODO sync plan to watch list
 
     try {
         Anilist.sync()

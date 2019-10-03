@@ -6,6 +6,8 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import io.elven.anilist.AniEntry
 import java.io.File
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 object AnileafInternalData {
     val data: InternalData
@@ -25,11 +27,12 @@ object AnileafInternalData {
     }
 
     fun save() {
+        data.lastUpdate = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)
         dataFile.writeText(mapper.writeValueAsString(data))
     }
 }
 
 data class InternalData(
-    var lastUpdate: Long = LocalDate.now().toEpochDay(),
+    var lastUpdate: Long = 0,
     var animeList: Array<AniEntry> = emptyArray()
 )

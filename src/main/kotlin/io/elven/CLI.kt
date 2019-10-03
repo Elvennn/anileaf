@@ -37,7 +37,6 @@ class CLI(private val args: Array<String>, private val animeList: Array<AniEntry
         Desktop.getDesktop().open(animeFile)
     }
 
-    // TODO Test this
     fun list() {
         println(
             animeList.joinToString("\n") {
