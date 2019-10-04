@@ -2,6 +2,8 @@ package io.elven
 
 import com.dgtlrepublic.anitomyj.AnitomyJ
 import com.jayway.jsonpath.JsonPath
+import de.vandermeer.asciitable.AsciiTable
+import de.vandermeer.skb.interfaces.transformers.textformat.TextAlignment
 import io.elven.anilist.AniEntry
 import io.elven.anilist.Anilist
 import io.elven.anilist.AnilistApp
@@ -38,11 +40,18 @@ class CLI(private val args: Array<String>, private val animeList: Array<AniEntry
     }
 
     fun list() {
-        println(
-            animeList.joinToString("\n") {
-                "${it.media.title.romaji}\t\t\t${it.progress}\t/\t${it.media.episodes}"
-            }
-        )
+        val table = AsciiTable()
+        animeList.forEach {
+            table.addRule()
+            val row = table.addRow(
+                it.media.title.romaji,
+                "${it.progress} / ${if (it.media.episodes != 0) it.media.episodes.toString() else "∞"}"
+            )
+            row.cells[1].context.textAlignment = TextAlignment.CENTER
+
+        }
+        table.addRule()
+        println(table.render())
     }
 
     // TODO Test this

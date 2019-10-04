@@ -26,6 +26,7 @@ dependencies {
     compile("org.simpleframework", "simple-xml", "2.7.1")
     compile("com.dgtlrepublic", "anitomyJ", "0.0.7")
     compile("me.xdrop", "fuzzywuzzy", "1.2.0")
+    compile("de.vandermeer", "asciitable", "0.3.2")
 }
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> { kotlinOptions.jvmTarget = "11" }
 
