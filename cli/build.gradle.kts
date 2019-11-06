@@ -33,12 +33,3 @@ dependencies {
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> { kotlinOptions.jvmTarget = "11" }
 
 
-val fatJar = task("cliJar", type = Jar::class) {
-    baseName = "cli"
-    manifest {
-        attributes["Implementation-Version"] = version
-        attributes["Main-Class"] = "io.elven.CLIKt"
-    }
-    from(configurations.runtime.map { if (it.isDirectory) it else zipTree(it) })
-    with(tasks["jar"] as CopySpec)
-}
