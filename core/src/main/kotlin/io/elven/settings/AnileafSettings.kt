@@ -5,11 +5,13 @@ import java.io.File
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 
-object AnileafSettings {
-    val path: String = "${System.getProperty("user.home")}/.config/anileaf"
+class AnileafSettings {
+    companion object {
+        val path: String = "${System.getProperty("user.home")}/.config/anileaf"
+        private const val settingsFileName: String = "settings.json"
+    }
     val settings: Settings
 
-    private const val settingsFileName: String = "settings.json"
     private val settingsFile = File("$path/$settingsFileName")
     private val mapper = jacksonObjectMapper()
 
@@ -26,6 +28,7 @@ object AnileafSettings {
             torrentDir.mkdir()
         }
     }
+
     fun save () {
         settingsFile.writeText(mapper.writeValueAsString(settings))
     }

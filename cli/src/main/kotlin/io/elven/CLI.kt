@@ -17,7 +17,11 @@ import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 
-class CLI(private val args: Array<String>, private val animeList: Array<AniEntry>) {
+class CLI(private val args: Array<String>) {
+    private val anileafSettings = AnileafSettings()
+    private val anileafData = AnileafInternalData()
+    private val anilist = Anilist(anileafSettings, anileafData)
+    private val animeList = anileafData.data.animeList
 
     // TODO test this
     fun play() {
@@ -29,7 +33,7 @@ class CLI(private val args: Array<String>, private val animeList: Array<AniEntry
             parseAnimeArg(animeArg)
         }
 
-        val animeFile = File("${AnileafSettings.settings.pathToAnimes}/${animeEntry.media.title.romaji}")
+        val animeFile = File("${anileafSettings.settings.pathToAnimes}/${animeEntry.media.title.romaji}")
             .listFiles()
             ?.first { AnimeFile.fromAnitomy(AnitomyJ.parse(it.name)).episode == animeEntry.progress }
         if (animeFile == null) {
@@ -60,11 +64,11 @@ class CLI(private val args: Array<String>, private val animeList: Array<AniEntry
         val progress: Int =
             args.getOrNull(3)?.toInt() ?: throw NoSuchElementException("Missing anime progress argument")
 
-        Anilist.updateAnime(parseAnimeArg(animeArg).media, progress)
+        anilist.updateAnime(parseAnimeArg(animeArg).media, progress)
     }
 
     fun sync() {
-        Anilist.sync()
+        anilist.sync()
     }
 
     fun init() {
@@ -94,9 +98,9 @@ class CLI(private val args: Array<String>, private val animeList: Array<AniEntry
 
         val response = HttpClient.newBuilder().build().send(request, HttpResponse.BodyHandlers.ofString()).body()
         val accessToken = JsonPath.read<String>(response, "$.access_token")
-        AnileafSettings.settings.anilistToken = accessToken
-        AnileafSettings.settings.anilistUserName = userName
-        AnileafSettings.save()
+        anileafSettings.settings.anilistToken = accessToken
+        anileafSettings.settings.anilistUserName = userName
+        anileafSettings.save()
     }
 
     private fun parseAnimeArg(animeArg: String): AniEntry {
@@ -109,7 +113,7 @@ fun main(args: Array<String>) {
     if (args.isEmpty()) {
         return
     }
-    val cli = CLI(args, AnileafInternalData.data.animeList)
+    val cli = CLI(args)
     when (args[0]) {
         "list" -> cli.list()
         "update" -> cli.update()

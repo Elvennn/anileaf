@@ -9,11 +9,13 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 
-object AnileafInternalData {
+class AnileafInternalData {
+    companion object {
+        private const val dataFileName = "internal_data.json"
+    }
     val data: InternalData
-    val animeDownloadState: MutableMap<Int, MutableSet<Int>> = mutableMapOf()
 
-    private const val dataFileName = "internal_data.json"
+    val animeDownloadState: MutableMap<Int, MutableSet<Int>> = mutableMapOf()
     private val mapper = jacksonObjectMapper()
     private val dataFile = File("${AnileafSettings.path}/$dataFileName")
 

@@ -14,16 +14,19 @@ import org.slf4j.LoggerFactory
 import java.util.*
 
 
-object Anilist {
-    private val userName: String = AnileafSettings.settings.anilistUserName
-    private val token: String = AnileafSettings.settings.anilistToken
+class Anilist(private val anileafSettings: AnileafSettings, private val anileafData : AnileafInternalData) {
+
+    companion object {
+        private const val ANILIST_API_URL = "https://graphql.anilist.co/"
+    }
+
+    private val userName: String = anileafSettings.settings.anilistUserName
+    private val token: String = anileafSettings.settings.anilistToken
     private var logger: Logger
 
-    private const val ANILIST_API_URL = "https://graphql.anilist.co/"
-
     fun sync() {
-        AnileafInternalData.data.animeList = getAnimeCurrentList()
-        AnileafInternalData.save()
+        anileafData.data.animeList = getAnimeCurrentList()
+        anileafData.save()
     }
 
     private fun get(query: GraphqlQuery): String {
