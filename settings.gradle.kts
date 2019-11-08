@@ -1,4 +1,2 @@
-rootProject.name = "anileaf"
-
-include("core", "cli", "sync")
+include("core", "cli", "daemon")
 

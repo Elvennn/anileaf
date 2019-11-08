@@ -4,9 +4,6 @@ plugins {
 }
 
 allprojects {
-    group = "io.elven"
-    version = "1.0"
-
     repositories {
         jcenter()
     }
@@ -17,5 +14,4 @@ dependencies {
     subprojects.forEach {
         archives(it)
     }
-
 }
