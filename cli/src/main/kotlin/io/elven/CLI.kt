@@ -9,18 +9,19 @@ import io.elven.anilist.Anilist
 import io.elven.anilist.AnilistApp
 import io.elven.anitomy.AnimeFile
 import io.elven.settings.AnileafInternalData
-import io.elven.settings.AnileafSettings
+import io.elven.settings.DataFileHandler
 import java.awt.Desktop
 import java.io.File
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
+import javax.xml.crypto.Data
 
 class CLI(private val args: Array<String>) {
-    private val anileafSettings = AnileafSettings()
+    private val cliSettings = CLISettings.load()
     private val anileafData = AnileafInternalData()
-    private val anilist = Anilist(anileafSettings, anileafData)
+    private val anilist = Anilist(cliSettings, anileafData)
     private val animeList = anileafData.data.animeList
 
     // TODO test this
@@ -33,7 +34,7 @@ class CLI(private val args: Array<String>) {
             parseAnimeArg(animeArg)
         }
 
-        val animeFile = File("${anileafSettings.settings.pathToAnimes}/${animeEntry.media.title.romaji}")
+        val animeFile = File("${cliSettings.pathToAnimes}/${animeEntry.media.title.romaji}")
             .listFiles()
             ?.first { AnimeFile.fromAnitomy(AnitomyJ.parse(it.name)).episode == animeEntry.progress }
         if (animeFile == null) {
@@ -98,9 +99,9 @@ class CLI(private val args: Array<String>) {
 
         val response = HttpClient.newBuilder().build().send(request, HttpResponse.BodyHandlers.ofString()).body()
         val accessToken = JsonPath.read<String>(response, "$.access_token")
-        anileafSettings.settings.anilistToken = accessToken
-        anileafSettings.settings.anilistUserName = userName
-        anileafSettings.save()
+        cliSettings.anilistToken = accessToken
+        cliSettings.anilistUserName = userName
+        cliSettings.save()
     }
 
     private fun parseAnimeArg(animeArg: String): AniEntry {

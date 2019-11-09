@@ -8,20 +8,20 @@ import com.jayway.jsonpath.spi.json.JsonProvider
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider
 import com.jayway.jsonpath.spi.mapper.MappingProvider
 import io.elven.settings.AnileafInternalData
-import io.elven.settings.AnileafSettings
+import io.elven.settings.GlobalSettings
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.util.*
 
 
-class Anilist(private val anileafSettings: AnileafSettings, private val anileafData : AnileafInternalData) {
+class Anilist(settings: GlobalSettings, private val anileafData : AnileafInternalData) {
 
     companion object {
         private const val ANILIST_API_URL = "https://graphql.anilist.co/"
     }
 
-    private val userName: String = anileafSettings.settings.anilistUserName
-    private val token: String = anileafSettings.settings.anilistToken
+    private val userName: String = settings.anilistUserName
+    private val token: String = settings.anilistToken
     private var logger: Logger
 
     fun sync() {

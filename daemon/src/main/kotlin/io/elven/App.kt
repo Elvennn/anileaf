@@ -4,7 +4,7 @@ import io.elven.anilist.AniEntry
 import io.elven.anilist.Anilist
 import io.elven.anitomy.AnimeFile
 import io.elven.settings.AnileafInternalData
-import io.elven.settings.AnileafSettings
+import io.elven.settings.DataFileHandler
 import io.elven.torrent.TorrentEntry
 import io.elven.torrent.TorrentFeed
 import me.xdrop.fuzzywuzzy.FuzzySearch
@@ -15,9 +15,9 @@ import java.util.concurrent.TimeUnit
 import kotlin.system.exitProcess
 
 class Daemon {
-    private val anileafSettings = AnileafSettings()
+    private val settings = DataFileHandler.load("settings.json", DaemonSettings())
     private val anileafData = AnileafInternalData()
-    private val anilist = Anilist(anileafSettings, anileafData)
+    private val anilist = Anilist(settings, anileafData)
 
     init {
         //    fixedRateTimer(period = anileafSettings.settings.syncFrequency.toLong() * 1000) {
@@ -44,7 +44,7 @@ class Daemon {
                 val dowloadedAnimeState =
                     anileafData.animeDownloadState.getOrPut(anime.media.id) { mutableSetOf() }
                 if (!dowloadedAnimeState.contains(torrent.animeFile!!.episode)) {
-                    val cmd = arrayOf("sh", "-c", "transmission-remote -ne -a ${torrent.link} -w '${anileafSettings.settings.pathToAnimes}/${anime.media.title.romaji}/'")
+                    val cmd = arrayOf("sh", "-c", "transmission-remote -ne -a ${torrent.link} -w '${settings.pathToAnimes}/${anime.media.title.romaji}/'")
                     Runtime.getRuntime().exec(cmd, null, null)
                     // TODO send notification
                     dowloadedAnimeState.add(torrent.animeFile!!.episode)
@@ -69,7 +69,7 @@ class Daemon {
 
     fun animeTorrentToDownload(currentList: Array<AniEntry>): List<Pair<AniEntry, TorrentEntry>> {
         val serializer = Persister()
-        val feed = serializer.read(TorrentFeed::class.java, URL(anileafSettings.settings.torrentRSSFeed).readText(), false)
+        val feed = serializer.read(TorrentFeed::class.java, URL(settings.torrentRSSFeed).readText(), false)
         feed.torrents.forEach { it.computeAnimeFile() }
         return feed.torrents
             // filter for watching animes
@@ -87,7 +87,7 @@ class Daemon {
             .filter { (anime, torrent) -> anime.progress < torrent.animeFile!!.episode }
             // filter for episode not downloded already
             .filter { (anime, torrent) ->
-                val animeFolder = File("${anileafSettings.settings.pathToAnimes}/${anime.media.title.romaji}")
+                val animeFolder = File("${settings.pathToAnimes}/${anime.media.title.romaji}")
                 if (animeFolder.exists()) {
                     animeFolder.listFiles()
                         ?.none { AnimeFile.fromFileName(it.name)?.episode == torrent.animeFile?.episode }
@@ -97,12 +97,12 @@ class Daemon {
             }
             // filter for video quality
             .filter { (_, torrent) ->
-                anileafSettings.settings.minVideoQuality.any { it == torrent.animeFile?.quality ?: "" }
+                settings.minVideoQuality.any { it == torrent.animeFile?.quality ?: "" }
             }
             // filter for fansub settings
             .filter { (anime, torrent) ->
                 val prefFansub =
-                    anileafSettings.settings.animeSettings.find { it.aniID == anime.media.id }?.prefFasubTeam ?: ""
+                    settings.animeSettings.find { it.aniID == anime.media.id }?.prefFasubTeam ?: ""
                 prefFansub == "" || torrent.animeFile?.fansub == prefFansub
             }
             .toList()
