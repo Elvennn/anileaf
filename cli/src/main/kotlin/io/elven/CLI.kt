@@ -59,13 +59,14 @@ class CLI(private val args: Array<String>) {
         println(table.render())
     }
 
-    // TODO Test this
     fun update() {
-        val animeArg: String = args.getOrNull(2) ?: throw NoSuchElementException("Missing anime title argument")
+        val animeArg: String = args.getOrNull(1) ?: throw NoSuchElementException("Missing anime title argument")
         val progress: Int =
-            args.getOrNull(3)?.toInt() ?: throw NoSuchElementException("Missing anime progress argument")
+            args.getOrNull(2)?.toInt() ?: throw NoSuchElementException("Missing anime progress argument")
 
-        anilist.updateAnime(parseAnimeArg(animeArg).media, progress)
+        val parsedAnime = parseAnimeArg(animeArg)
+        anilist.updateAnime(parsedAnime.media, progress)
+        anileafData.saveWithUpdatedAnime(parsedAnime.withNewProgress(progress))
     }
 
     fun sync() {

@@ -21,6 +21,12 @@ class AnileafInternalData {
         data.lastUpdate = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)
         DataFileHandler.save(dataFileName, data)
     }
+
+    fun saveWithUpdatedAnime(aniEntry: AniEntry) {
+        val indexToReplace = data.animeList.indexOfFirst { it.media == aniEntry.media }
+        data.animeList[indexToReplace] = aniEntry
+        save()
+    }
 }
 
 data class InternalData(
