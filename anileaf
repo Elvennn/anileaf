@@ -1,0 +1,4 @@
+#!/bin/sh
+
+java -jar /home/elven/workspace/anileaf/cli/build/libs/cli-fat-*.jar $@
+
