@@ -1,6 +1,5 @@
 package io.elven
 
-import io.elven.settings.DataFileHandler
 import io.elven.settings.GlobalSettings
 
 class DaemonSettings(
@@ -8,8 +7,9 @@ class DaemonSettings(
     anilistToken: String = "",
     val syncFrequency: Int = 3000,
     val pathToAnimes: String = "",
-    val pathToTorrentFiles: String = "${DataFileHandler.basePath}/torrentFiles",
     val torrentRSSFeed: String = "",
+    val transmissionURL: String = "",
+    val transmissionCredentials: String = "",
     val minVideoQuality: Array<String> = emptyArray(),
     val animeSettings: Array<AnimeSettings> = emptyArray()
 ) : GlobalSettings(anilistUserName, anilistToken)

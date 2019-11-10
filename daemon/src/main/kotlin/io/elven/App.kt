@@ -18,8 +18,10 @@ class Daemon {
     private val settings = DataFileHandler.load("settings.json", DaemonSettings())
     private val anileafData = AnileafInternalData()
     private val anilist = Anilist(settings, anileafData)
+    private val transmission = Transmission(settings)
 
     init {
+        syncAnilistAndTorrents()
         //    fixedRateTimer(period = anileafSettings.settings.syncFrequency.toLong() * 1000) {
         //        syncTask()
         //    }
@@ -37,20 +39,20 @@ class Daemon {
             anilist.sync()
             val currentList = anileafData.data.animeList
             val animeTorrentToDL = animeTorrentToDownload(currentList)
-            if (!animeTorrentToDL.isEmpty()) {
-                startTransmission()
+            if (animeTorrentToDL.isNotEmpty()) {
+                // startTransmission()
             }
             animeTorrentToDL.forEach { (anime, torrent) ->
-                val dowloadedAnimeState =
-                    anileafData.animeDownloadState.getOrPut(anime.media.id) { mutableSetOf() }
-                if (!dowloadedAnimeState.contains(torrent.animeFile!!.episode)) {
-                    val cmd = arrayOf("sh", "-c", "transmission-remote -ne -a ${torrent.link} -w '${settings.pathToAnimes}/${anime.media.title.romaji}/'")
-                    Runtime.getRuntime().exec(cmd, null, null)
+                val animeDownloadState =
+                    anileafData.data.animeDownloadState.getOrPut(anime.media.id) { mutableSetOf() }
+                if (!animeDownloadState.contains(torrent.animeFile!!.episode)) {
+                    transmission.downloadAnime(anime, torrent)
                     // TODO send notification
-                    dowloadedAnimeState.add(torrent.animeFile!!.episode)
+                    animeDownloadState.add(torrent.animeFile!!.episode)
+                    println(torrent)
                 }
             }
-            println(animeTorrentToDL)
+//            println(animeTorrentToDL.joinToString("\n"))
             anileafData.save()
         } catch (e: Exception) {
             // TODO Error when unable to get

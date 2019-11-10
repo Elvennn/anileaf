@@ -10,7 +10,6 @@ class AnileafInternalData {
     }
     val data: InternalData
 
-    val animeDownloadState: MutableMap<Int, MutableSet<Int>> = mutableMapOf()
 
 
     init {
@@ -31,5 +30,7 @@ class AnileafInternalData {
 
 data class InternalData(
     var lastUpdate: Long = 0,
-    var animeList: Array<AniEntry> = emptyArray()
+    var animeList: Array<AniEntry> = emptyArray(),
+    val animeDownloadState: MutableMap<Int, MutableSet<Int>> = mutableMapOf()
+
 )
