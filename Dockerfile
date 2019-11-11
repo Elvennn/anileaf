@@ -1,3 +1,4 @@
 FROM openjdk:11-jre-slim
-ADD ./daemon-fat-1.0-SNAPSHOT.jar app.jar
-CMD java -jar app.jar
+RUN apt update && apt install -y transmission-daemon
+ADD ./daemon-fat-1.0-SNAPSHOT.jar daemon.jar
+CMD java -jar daemon.jar /Animes/.anileaf/

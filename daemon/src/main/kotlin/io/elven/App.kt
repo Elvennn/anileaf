@@ -12,20 +12,19 @@ import org.simpleframework.xml.core.Persister
 import java.io.File
 import java.net.URL
 import java.util.concurrent.TimeUnit
+import kotlin.concurrent.fixedRateTimer
 import kotlin.system.exitProcess
 
-class Daemon {
-    private val settings = DataFileHandler.load("settings.json", DaemonSettings())
-    private val anileafData = AnileafInternalData()
+class Daemon(basePath: String? = null) {
+    private val settings = DataFileHandler.load("settings.json", DaemonSettings(), basePath)
+    private val anileafData = AnileafInternalData(basePath)
     private val anilist = Anilist(settings, anileafData)
     private val transmission = Transmission(settings)
 
     init {
-        syncAnilistAndTorrents()
-        //    fixedRateTimer(period = anileafSettings.settings.syncFrequency.toLong() * 1000) {
-        //        syncTask()
-        //    }
-        //
+//        fixedRateTimer(period = settings.syncFrequency.toLong() * 1000) {
+            syncAnilistAndTorrents()
+//        }
         //    fixedRateTimer(period = 1000) {
         //        detectionTask()
         //    }
@@ -39,9 +38,6 @@ class Daemon {
             anilist.sync()
             val currentList = anileafData.data.animeList
             val animeTorrentToDL = animeTorrentToDownload(currentList)
-            if (animeTorrentToDL.isNotEmpty()) {
-                // startTransmission()
-            }
             animeTorrentToDL.forEach { (anime, torrent) ->
                 val animeDownloadState =
                     anileafData.data.animeDownloadState.getOrPut(anime.media.id) { mutableSetOf() }
@@ -58,14 +54,6 @@ class Daemon {
             // TODO Error when unable to get
             e.printStackTrace()
             exitProcess(1)
-        }
-    }
-
-    fun startTransmission() {
-        val process = ProcessBuilder("lsof", "-i:9091").start()
-        process.waitFor(10, TimeUnit.SECONDS)
-        if (process.exitValue() != 0) {
-            ProcessBuilder("transmission-daemon").start()
         }
     }
 
@@ -91,8 +79,14 @@ class Daemon {
             .filter { (anime, torrent) ->
                 val animeFolder = File("${settings.pathToAnimes}/${anime.media.title.romaji}")
                 if (animeFolder.exists()) {
-                    animeFolder.listFiles()
-                        ?.none { AnimeFile.fromFileName(it.name)?.episode == torrent.animeFile?.episode }
+                    animeFolder.list()
+                        ?.none {
+                            try {
+                                AnimeFile.fromFileName(it)?.episode == torrent.animeFile?.episode
+                            } catch (e: Exception) {
+                                false
+                            }
+                        }
                         ?: true
                 } else
                     true
@@ -108,20 +102,10 @@ class Daemon {
                 prefFansub == "" || torrent.animeFile?.fansub == prefFansub
             }
             .toList()
-        // TODO Download a unique release of the episode (check if already downloaded)
     }
 }
 
 fun main(args: Array<String>) {
-    Daemon()
-}
-
-fun detectionTask() {
-    // TODO
-    println("bonjour")
-}
-
-fun <T> T.log(): T {
-    println(this);
-    return this
+    val basePath: String? = args.getOrNull(0)
+    Daemon(basePath)
 }

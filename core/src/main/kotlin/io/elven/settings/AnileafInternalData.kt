@@ -4,7 +4,7 @@ import io.elven.anilist.AniEntry
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 
-class AnileafInternalData {
+class AnileafInternalData(private val basePathOverride: String? = null) {
     companion object {
         private const val dataFileName = "internal_data.json"
     }
@@ -13,12 +13,12 @@ class AnileafInternalData {
 
 
     init {
-        data = DataFileHandler.load(dataFileName, InternalData())
+        data = DataFileHandler.load(dataFileName, InternalData(), basePathOverride)
     }
 
     fun save() {
         data.lastUpdate = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)
-        DataFileHandler.save(dataFileName, data)
+        DataFileHandler.save(dataFileName, data, basePathOverride)
     }
 
     fun saveWithUpdatedAnime(aniEntry: AniEntry) {
