@@ -15,3 +15,8 @@ dependencies {
         archives(it)
     }
 }
+
+task("deployQnap", type = Exec::class) {
+    dependsOn(":daemon:fatJar")
+    commandLine("./remoteUpdate.sh")
+}
