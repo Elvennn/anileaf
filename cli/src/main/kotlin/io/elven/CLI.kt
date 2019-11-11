@@ -9,14 +9,12 @@ import io.elven.anilist.Anilist
 import io.elven.anilist.AnilistApp
 import io.elven.anitomy.AnimeFile
 import io.elven.settings.AnileafInternalData
-import io.elven.settings.DataFileHandler
 import java.awt.Desktop
 import java.io.File
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
-import javax.xml.crypto.Data
 
 class CLI(private val args: Array<String>) {
     private val cliSettings = CLISettings.load()

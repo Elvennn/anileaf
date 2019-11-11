@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory
 import java.util.*
 
 
-class Anilist(settings: GlobalSettings, private val anileafData : AnileafInternalData) {
+class Anilist(settings: GlobalSettings, private val anileafData: AnileafInternalData) {
 
     companion object {
         private const val ANILIST_API_URL = "https://graphql.anilist.co/"

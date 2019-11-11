@@ -8,6 +8,7 @@ private object Utils {
         return javaClass.classLoader.getResource(path)
     }
 }
+
 fun getResourceAsText(path: String): String {
     return Utils.getResourceURL(path)?.readText() ?: throw Exception("Cannot get $path")
 }

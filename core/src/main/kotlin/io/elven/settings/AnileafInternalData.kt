@@ -8,8 +8,8 @@ class AnileafInternalData {
     companion object {
         private const val dataFileName = "internal_data.json"
     }
-    val data: InternalData
 
+    val data: InternalData
 
 
     init {

@@ -1,6 +1,6 @@
 package io.elven.torrent
 
-class Torrent () {
+class Torrent() {
     fun sync() {
 
     }

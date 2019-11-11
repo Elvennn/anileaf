@@ -18,7 +18,7 @@ object DataFileHandler {
         }
     }
 
-    inline fun <reified T : Any> load(fileName: String, default: T) : T {
+    inline fun <reified T : Any> load(fileName: String, default: T): T {
         val file = File("$basePath/$fileName")
         if (!file.exists()) {
             save(fileName, default)
