@@ -7,6 +7,7 @@ class DownloaderSettings(
     anilistToken: String = "",
     val syncFrequency: Int = 3000,
     val pathToAnimes: String = "",
+    val pathToDownloadAnimes: String = "",
     val torrentRSSFeed: String = "",
     val transmissionURL: String = "",
     val transmissionCredentials: String = "",

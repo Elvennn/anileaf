@@ -8,7 +8,7 @@ class Transmission(private val settings: DownloaderSettings) {
         val cmd = arrayOf(
             "sh",
             "-c",
-            "transmission-remote ${settings.transmissionURL} -n ${settings.transmissionCredentials} -a ${torrent.link} -w '${settings.pathToAnimes}/${anime.media.title.romaji}/'"
+            "transmission-remote ${settings.transmissionURL} -n ${settings.transmissionCredentials} -a ${torrent.link} -w '${settings.pathToDownloadAnimes}/${anime.media.title.romaji}/'"
         )
         val returnCode = Runtime.getRuntime().exec(cmd, null, null).waitFor()
         if (returnCode != 0) {
