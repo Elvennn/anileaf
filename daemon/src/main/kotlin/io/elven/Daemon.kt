@@ -1,10 +1,18 @@
 package io.elven
 
+import com.den_4.inotify_java.EventQueueFull
+import com.den_4.inotify_java.Inotify
+import com.den_4.inotify_java.InotifyEvent
+import com.den_4.inotify_java.InotifyEventListener
+import com.den_4.inotify_java.enums.Event
 import io.elven.anilist.Anilist
 import io.elven.download.Downloader
 import io.elven.download.DownloaderSettings
 import io.elven.settings.AnileafInternalData
 import io.elven.settings.DataFileHandler
+import java.io.File
+import java.lang.Thread.sleep
+import java.util.concurrent.atomic.AtomicInteger
 import kotlin.concurrent.fixedRateTimer
 
 class Daemon(basePath: String? = null) {
