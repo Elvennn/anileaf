@@ -22,9 +22,9 @@ class CLI(private val args: Array<String>) {
     private val anilist = Anilist(cliSettings, anileafData)
     private val animeList = anileafData.data.animeList
 
-    // TODO test this
     fun play() {
         val animeArg: String? = args.getOrNull(1)
+        anilist.sync()
         val animeEntry = if (animeArg.isNullOrBlank()) {
             // TODO anime choice in list
             throw NotImplementedError()
@@ -34,9 +34,9 @@ class CLI(private val args: Array<String>) {
 
         val animeFile = File("${cliSettings.pathToAnimesCLI}/${animeEntry.media.title.romaji}")
             .listFiles()
-            ?.first { AnimeFile.fromAnitomy(AnitomyJ.parse(it.name)).episode == animeEntry.progress }
+            ?.firstOrNull { AnimeFile.fromAnitomy(AnitomyJ.parse(it.name)).episode == animeEntry.progress + 1 }
         if (animeFile == null) {
-            print("No video files for ${animeEntry.media.title.romaji} episode ${animeEntry.progress}.")
+            print("No video files for ${animeEntry.media.title.romaji} episode ${animeEntry.progress + 1}.")
             return
         }
         Desktop.getDesktop().open(animeFile)
