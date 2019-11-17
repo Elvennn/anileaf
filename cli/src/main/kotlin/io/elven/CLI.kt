@@ -32,7 +32,7 @@ class CLI(private val args: Array<String>) {
             parseAnimeArg(animeArg)
         }
 
-        val animeFile = File("${cliSettings.pathToAnimes}/${animeEntry.media.title.romaji}")
+        val animeFile = File("${cliSettings.pathToAnimesCLI}/${animeEntry.media.title.romaji}")
             .listFiles()
             ?.first { AnimeFile.fromAnitomy(AnitomyJ.parse(it.name)).episode == animeEntry.progress }
         if (animeFile == null) {

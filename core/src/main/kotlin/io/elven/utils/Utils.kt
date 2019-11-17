@@ -1,6 +1,5 @@
 package io.elven.utils
 
-import java.lang.Exception
 import java.net.URL
 
 private object Utils {

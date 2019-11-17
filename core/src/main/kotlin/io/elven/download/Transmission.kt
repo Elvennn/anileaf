@@ -1,9 +1,8 @@
-package io.elven
+package io.elven.download
 
 import io.elven.anilist.AniEntry
-import io.elven.torrent.TorrentEntry
 
-class Transmission(private val settings: DaemonSettings) {
+class Transmission(private val settings: DownloaderSettings) {
 
     fun downloadAnime(anime: AniEntry, torrent: TorrentEntry) {
         val cmd = arrayOf(
@@ -11,6 +10,9 @@ class Transmission(private val settings: DaemonSettings) {
             "-c",
             "transmission-remote ${settings.transmissionURL} -n ${settings.transmissionCredentials} -a ${torrent.link} -w '${settings.pathToAnimes}/${anime.media.title.romaji}/'"
         )
-        Runtime.getRuntime().exec(cmd, null, null)
+        val returnCode = Runtime.getRuntime().exec(cmd, null, null).waitFor()
+        if (returnCode != 0) {
+            error("Cannot access TransmissionBT")
+        }
     }
 }

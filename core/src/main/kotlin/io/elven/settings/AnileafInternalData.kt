@@ -11,7 +11,6 @@ class AnileafInternalData(private val basePathOverride: String? = null) {
 
     val data: InternalData
 
-
     init {
         data = DataFileHandler.load(dataFileName, InternalData(), basePathOverride)
     }
@@ -30,7 +29,5 @@ class AnileafInternalData(private val basePathOverride: String? = null) {
 
 data class InternalData(
     var lastUpdate: Long = 0,
-    var animeList: Array<AniEntry> = emptyArray(),
-    val animeDownloadState: MutableMap<Int, MutableSet<Int>> = mutableMapOf()
-
+    var animeList: Array<AniEntry> = emptyArray()
 )

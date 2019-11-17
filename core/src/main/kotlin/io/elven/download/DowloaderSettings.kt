@@ -1,8 +1,8 @@
-package io.elven
+package io.elven.download
 
 import io.elven.settings.GlobalSettings
 
-class DaemonSettings(
+class DownloaderSettings(
     anilistUserName: String = "",
     anilistToken: String = "",
     val syncFrequency: Int = 3000,

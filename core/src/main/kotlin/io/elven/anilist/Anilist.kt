@@ -24,9 +24,10 @@ class Anilist(settings: GlobalSettings, private val anileafData: AnileafInternal
     private val token: String = settings.anilistToken
     private var logger: Logger
 
-    fun sync() {
+    fun sync(): Array<AniEntry> {
         anileafData.data.animeList = getAnimeCurrentList()
         anileafData.save()
+        return anileafData.data.animeList
     }
 
     private fun get(query: GraphqlQuery): String {

@@ -78,7 +78,7 @@ public class Demo {
             }
         });
         sleep(seconds * 1000);
-        i.destroy();
+        // i.destroy();
         
         String fmt = "Received %d filesystem events and %d queue full events";
         fmt = fmt.concat(" in %d seconds");

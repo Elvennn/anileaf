@@ -1,4 +1,4 @@
-package io.elven.torrent
+package io.elven.download
 
 import io.elven.anitomy.AnimeFile
 import org.simpleframework.xml.Element
@@ -18,10 +18,7 @@ data class TorrentFeed(
 @Root
 data class TorrentEntry(
     @field:Element var link: String = "",
-    @field:Element(name = "title") var fileName: String = "",
-    var animeFile: AnimeFile? = null
+    @field:Element(name = "title") var fileName: String = ""
 ) {
-    fun computeAnimeFile() {
-        animeFile = AnimeFile.fromFileName(fileName)
-    }
+    val animeFile: AnimeFile? by lazy { AnimeFile.fromFileName(fileName) }
 }
