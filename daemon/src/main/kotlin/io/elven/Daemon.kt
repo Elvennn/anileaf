@@ -1,12 +1,9 @@
 package io.elven
 
-import com.den_4.inotify_java.EventQueueFull
-import com.den_4.inotify_java.InotifyEvent
-import com.den_4.inotify_java.InotifyEventListener
-import com.den_4.inotify_java.enums.Event
 import io.elven.anilist.Anilist
 import io.elven.download.Downloader
 import io.elven.download.DownloaderSettings
+import io.elven.filewatch.NativeInotify
 import io.elven.settings.AnileafInternalData
 import io.elven.settings.DataFileHandler
 import java.io.File
@@ -27,18 +24,7 @@ class Daemon(basePath: String? = null) {
         if (!dir.isDirectory) {
             throw Exception("not a directory")
         }
-        val i = com.den_4.inotify_java.Inotify()
-        val wd = i.addWatch(dir.path, Event.Close_No_Write, Event.Open, Event.Access)
-        i.addListener(wd, object : InotifyEventListener {
-            override fun queueFull(e: EventQueueFull) {
-                println(e)
-            }
-
-            override fun filesystemEventOccurred(e: InotifyEvent) {
-                println(e)
-            }
-        })
-        sleep((seconds * 1000).toLong())
+       NativeInotify()
         println("END")
     }
 
