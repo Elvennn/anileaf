@@ -22,53 +22,8 @@ class CLI(private val args: Array<String>) {
     private val anilist = Anilist(cliSettings, anileafData)
     private val animeList = anileafData.data.animeList
 
-    fun play() {
-        val animeArg: String? = args.getOrNull(1)
-        anilist.sync()
-        val animeEntry = if (animeArg.isNullOrBlank()) {
-            // TODO anime choice in list
-            throw NotImplementedError()
-        } else {
-            parseAnimeArg(animeArg)
-        }
-
-        val animeFile = File("${cliSettings.pathToAnimesCLI}/${animeEntry.media.title.romaji}")
-            .listFiles()
-            ?.firstOrNull { AnimeFile.fromAnitomy(AnitomyJ.parse(it.name)).episode == animeEntry.progress + 1 }
-        if (animeFile == null) {
-            print("No video files for ${animeEntry.media.title.romaji} episode ${animeEntry.progress + 1}.")
-            return
-        }
-        Desktop.getDesktop().open(animeFile)
-    }
-
-    fun list() {
-        val table = AsciiTable()
-        animeList.forEach {
-            table.addRule()
-            val row = table.addRow(
-                it.media.title.romaji,
-                "${it.progress} / ${if (it.media.episodes != 0) it.media.episodes.toString() else "∞"}"
-            )
-            row.cells[1].context.textAlignment = TextAlignment.CENTER
-
-        }
-        table.addRule()
-        println(table.render())
-    }
-
-    fun update() {
-        val animeArg: String = args.getOrNull(1) ?: throw NoSuchElementException("Missing anime title argument")
-        val progress: Int =
-            args.getOrNull(2)?.toInt() ?: throw NoSuchElementException("Missing anime progress argument")
-
-        val parsedAnime = parseAnimeArg(animeArg)
-        anilist.updateAnime(parsedAnime.media, progress)
-        anileafData.saveWithUpdatedAnime(parsedAnime.withNewProgress(progress))
-    }
-
-    fun sync() {
-        anilist.sync()
+    fun catchUp() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     fun init() {
@@ -103,9 +58,80 @@ class CLI(private val args: Array<String>) {
         cliSettings.save()
     }
 
+    fun list() {
+        val table = AsciiTable()
+        animeList.forEach {
+            table.addRule()
+            val row = table.addRow(
+                it.media.title.romaji,
+                "${it.progress} / ${if (it.media.episodes != 0) it.media.episodes.toString() else "∞"}"
+            )
+            row.cells[1].context.textAlignment = TextAlignment.CENTER
+
+        }
+        table.addRule()
+        println(table.render())
+    }
+
+    fun next() {
+        anilist.sync().forEach {
+            print("${it.media.title.romaji} (${it.progress}) : ")
+            println(findNextEpisodes(it)
+                ?.sortedBy { (animeFile, _) -> animeFile.episode }
+                ?.joinToString(" ") { (animeFile, _) ->
+                    animeFile.episode.toString()
+                } ?: "")
+        }
+    }
+
+    fun play() {
+        val animeArg: String? = args.getOrNull(1)
+        anilist.sync()
+        val animeEntry = if (animeArg.isNullOrBlank()) {
+            // TODO anime choice in list
+            throw NotImplementedError()
+        } else {
+            parseAnimeArg(animeArg)
+        }
+
+        val animeFile = findNextEpisode(animeEntry)
+        if (animeFile == null) {
+            print("No video files for ${animeEntry.media.title.romaji} episode ${animeEntry.progress + 1}.")
+            return
+        }
+        Desktop.getDesktop().open(animeFile)
+    }
+
+    fun sync() {
+        anilist.sync()
+    }
+
+    fun update() {
+        val animeArg: String = args.getOrNull(1) ?: throw NoSuchElementException("Missing anime title argument")
+        val progress: Int =
+            args.getOrNull(2)?.toInt() ?: throw NoSuchElementException("Missing anime progress argument")
+
+        val parsedAnime = parseAnimeArg(animeArg)
+        anilist.updateAnime(parsedAnime.media, progress)
+        anileafData.saveWithUpdatedAnime(parsedAnime.withNewProgress(progress))
+    }
+
     private fun parseAnimeArg(animeArg: String): AniEntry {
         return animeList.maxBy { it.media.title.match(animeArg) }
             ?: throw NoSuchElementException("Unable to find any currently watching anime for [$animeArg]")
+    }
+
+    private fun findNextEpisode(animeEntry: AniEntry): File? {
+        return File("${cliSettings.pathToAnimesCLI}/${animeEntry.media.title.romaji}")
+            .listFiles()
+            ?.firstOrNull { AnimeFile.fromAnitomy(AnitomyJ.parse(it.name)).episode == animeEntry.progress + 1 }
+    }
+
+    private fun findNextEpisodes(animeEntry: AniEntry): List<Pair<AnimeFile, File>>? {
+        return File("${cliSettings.pathToAnimesCLI}/${animeEntry.media.title.romaji}")
+            .listFiles()
+            ?.map { Pair(AnimeFile.fromAnitomy(AnitomyJ.parse(it.name)), it) }
+            ?.filter { (animeFile, _) -> animeFile.episode > animeEntry.progress }
     }
 }
 
@@ -115,11 +141,13 @@ fun main(args: Array<String>) {
     }
     val cli = CLI(args)
     when (args[0]) {
-        "list" -> cli.list()
-        "update" -> cli.update()
-        "play" -> cli.play()
+        "catchup" -> cli.catchUp()
         "init" -> cli.init()
+        "list" -> cli.list()
+        "next" -> cli.next()
+        "play" -> cli.play()
         "sync" -> cli.sync()
+        "update" -> cli.update()
         else -> throw NoSuchElementException("Wrong cli mode [$args[0]")
     }
 }
