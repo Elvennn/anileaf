@@ -15,13 +15,13 @@ java {
 repositories {
     jcenter()
     mavenCentral()
-
 }
 
 dependencies {
     compile(kotlin("stdlib-jdk8"))
     testImplementation("junit", "junit", "4.12")
     compile(project(":core"))
+    compile(files("../libs/inotify-java.jar"))
 }
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> { kotlinOptions.jvmTarget = "11" }
 

@@ -1,7 +1,6 @@
 package io.elven
 
 import com.den_4.inotify_java.EventQueueFull
-import com.den_4.inotify_java.Inotify
 import com.den_4.inotify_java.InotifyEvent
 import com.den_4.inotify_java.InotifyEventListener
 import com.den_4.inotify_java.enums.Event
@@ -12,7 +11,6 @@ import io.elven.settings.AnileafInternalData
 import io.elven.settings.DataFileHandler
 import java.io.File
 import java.lang.Thread.sleep
-import java.util.concurrent.atomic.AtomicInteger
 import kotlin.concurrent.fixedRateTimer
 
 class Daemon(basePath: String? = null) {
@@ -24,38 +22,36 @@ class Daemon(basePath: String? = null) {
     private val downloader = Downloader(settings)
 
     fun run() {
-        fixedRateTimer(period = settings.syncFrequency.toLong() * 1000) {
-            println("RUN SYNC")
-            val currentList = anilist.sync()
-            downloader.downloadMatchingTorrents(currentList)
+        val dir = File("${settings.pathToAnimes}/Dr. STONE/")
+        val seconds = 20
+        if (!dir.isDirectory) {
+            throw Exception("not a directory")
         }
-        animeFileWatch("/share/Public/Animes/Dr. STONE/", 60)
-    }
-
-    private fun animeFileWatch(dir: String, seconds: Int) {
-        val i = Inotify()
-        val wd = i.addWatch(dir, Event.All)
-        val qevs = AtomicInteger()
-        val evs = AtomicInteger()
+        val i = com.den_4.inotify_java.Inotify()
+        val wd = i.addWatch(dir.path, Event.Close_No_Write, Event.Open, Event.Access)
         i.addListener(wd, object : InotifyEventListener {
             override fun queueFull(e: EventQueueFull) {
                 println(e)
-                qevs.incrementAndGet()
             }
 
             override fun filesystemEventOccurred(e: InotifyEvent) {
                 println(e)
-                evs.incrementAndGet()
             }
         })
         sleep((seconds * 1000).toLong())
-         i.destroy();
-
-        println("Received $evs filesystem events and $qevs queue full events in $seconds")
+        println("END")
     }
 
+    fun run2() {
+        println("RUN SYNC")
+        val currentList = anilist.sync()
+        downloader.downloadMatchingTorrents(currentList)
+    }
 }
 
 fun main (args : Array<String>) {
-    Daemon(args.getOrNull(0)).run()
+
+    val daemon = Daemon(args.getOrNull(0))
+    daemon.run2()
+    daemon.run()
 }
