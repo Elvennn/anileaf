@@ -8,7 +8,10 @@ import io.elven.anilist.AniEntry
 import io.elven.anilist.Anilist
 import io.elven.anilist.AnilistApp
 import io.elven.anitomy.AnimeFile
+import io.elven.download.Downloader
+import io.elven.download.DownloaderSettings
 import io.elven.settings.AnileafInternalData
+import io.elven.settings.DataFileHandler
 import java.awt.Desktop
 import java.io.File
 import java.net.URI
@@ -20,10 +23,13 @@ class CLI(private val args: Array<String>) {
     private val cliSettings = CLISettings.load()
     private val anileafData = AnileafInternalData()
     private val anilist = Anilist(cliSettings, anileafData)
-    private val animeList = anileafData.data.animeList
 
     fun catchUp() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val downloaderSettings = DataFileHandler.load("settings.json", DownloaderSettings())
+        val downloader = Downloader(downloaderSettings)
+        val animeList = anilist.sync()
+        val torrentFeeds = animeList.map { "${downloaderSettings.torrentRSSFeed}+${it.media.title.romaji.toLowerCase().replace(" ", "+")}" }
+        downloader.downloadMatchingTorrents(animeList, *torrentFeeds.toTypedArray())
     }
 
     fun init() {
@@ -60,7 +66,7 @@ class CLI(private val args: Array<String>) {
 
     fun list() {
         val table = AsciiTable()
-        animeList.forEach {
+        anilist.sync().forEach {
             table.addRule()
             val row = table.addRow(
                 it.media.title.romaji,
@@ -117,7 +123,7 @@ class CLI(private val args: Array<String>) {
     }
 
     private fun parseAnimeArg(animeArg: String): AniEntry {
-        return animeList.maxBy { it.media.title.match(animeArg) }
+        return anilist.sync().maxBy { it.media.title.match(animeArg) }
             ?: throw NoSuchElementException("Unable to find any currently watching anime for [$animeArg]")
     }
 

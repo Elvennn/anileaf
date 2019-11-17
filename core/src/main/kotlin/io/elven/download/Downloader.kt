@@ -20,6 +20,7 @@ class Downloader(private val settings: DownloaderSettings) {
         torrentFeedsUrl
             .map { fetchTorrentFeed(it).torrents }
             .flatten()
+            .toSet()
             .toTypedArray()
             .filterAndMapTorrentEntries(animeList)
             .download()
