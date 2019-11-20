@@ -50,10 +50,9 @@ class Downloader(private val settings: DownloaderSettings) {
 
     private fun Sequence<TorrentEntry>.filterAndMapAnimeWithinList(animeList: Array<AniEntry>) =
         this.mapNotNull { entry ->
-            val matchedAnime =
-                FuzzySearch.extractOne(entry.animeFile?.title ?: "", animeList.toList()) { it.media.title.romaji }
-            if (matchedAnime.score >= 90) {
-                Pair(matchedAnime.referent, entry)
+            val matchedAnime = animeList.firstOrNull { entry.animeFile?.maxRatioWith(it) ?: false }
+            if (matchedAnime != null) {
+                Pair(matchedAnime, entry)
             } else {
                 null
             }
@@ -90,4 +89,8 @@ class Downloader(private val settings: DownloaderSettings) {
                 settings.animeSettings.find { it.aniID == anime.media.id }?.prefFasubTeam ?: ""
             prefFansub == "" || torrent.animeFile?.fansub == prefFansub
         }
+}
+fun <T> Sequence<T>.log(): Sequence<T> {
+    println(this.joinToString("\n"));
+    return this
 }

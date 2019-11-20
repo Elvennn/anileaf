@@ -122,8 +122,9 @@ class CLI(private val args: Array<String>) {
         anileafData.saveWithUpdatedAnime(parsedAnime.withNewProgress(progress))
     }
 
+    // TODO verify best match
     private fun parseAnimeArg(animeArg: String): AniEntry {
-        return anilist.sync().maxBy { it.media.title.match(animeArg) }
+        return anilist.sync().maxBy { it.media.title.partialMatch(animeArg) }
             ?: throw NoSuchElementException("Unable to find any currently watching anime for [$animeArg]")
     }
 

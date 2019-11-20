@@ -16,8 +16,13 @@ data class AniMedia(val id: Int = -1, val title: AniTitle = AniTitle(), val epis
 }
 
 data class AniTitle(val romaji: String = "", val english: String = "") {
-    fun match(title: String) = max(
+    fun partialMatch(title: String) = max(
         FuzzySearch.partialRatio(romaji.toLowerCase(), title.toLowerCase()),
         FuzzySearch.partialRatio(english.toLowerCase(), title.toLowerCase())
+    )
+
+    fun match(title: String) = max(
+        FuzzySearch.ratio(romaji.toLowerCase(), title.toLowerCase()),
+        FuzzySearch.ratio(english.toLowerCase(), title.toLowerCase())
     )
 }
