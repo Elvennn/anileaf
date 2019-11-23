@@ -88,8 +88,6 @@ int main(int argc, char *argv[])
     exit(EXIT_FAILURE);
   }
 
-  printf("Press ENTER key to terminate.\n");
-
   /* Create the file descriptor for accessing the inotify API */
 
   fd = inotify_init1(IN_NONBLOCK);
@@ -139,7 +137,6 @@ int main(int argc, char *argv[])
 
   /* Wait for events and/or terminal input */
 
-  printf("Listening for events.\n");
   while (1)
   {
     poll_num = poll(fds, nfds, -1);

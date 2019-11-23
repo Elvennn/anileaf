@@ -3,3 +3,4 @@
 $1/git checkout develop
 $1/git fetch
 $1/git reset --hard origin/develop
+animewatch/build.sh
