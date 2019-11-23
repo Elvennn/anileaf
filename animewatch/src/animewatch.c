@@ -1,4 +1,6 @@
-#include <iostream>
+#include <stdlib.h>
+#include <stdio.h>
+#include <time.h>
 #include <sys/inotify.h>
 
 #include <errno.h>
@@ -58,36 +60,16 @@ handle_events(int fd, int *wd, int argc, char *argv[])
       event = (const struct inotify_event *)ptr;
 
       /* Print event type */
+      if (event->mask & IN_ISDIR)
+        continue;
 
-      if (event->mask & IN_OPEN)
-        printf("IN_OPEN: ");
-      if (event->mask & IN_CLOSE_NOWRITE)
-        printf("IN_CLOSE_NOWRITE: ");
-      if (event->mask & IN_CLOSE_WRITE)
-        printf("IN_CLOSE_WRITE: ");
-
-      /* Print the name of the watched directory */
-
-      for (i = 1; i < argc; ++i)
-      {
-        if (wd[i] == event->wd)
-        {
-          printf("%s/", argv[i]);
-          break;
-        }
-      }
+      printf("%lu;", (unsigned long)time(NULL));
 
       /* Print the name of the file */
-
       if (event->len)
-        printf("%s", event->name);
+        printf("%s\n", event->name);
 
-      /* Print type of filesystem object */
 
-      if (event->mask & IN_ISDIR)
-        printf(" [directory]\n");
-      else
-        printf(" [file]\n");
     }
   }
 }
@@ -132,8 +114,7 @@ int main(int argc, char *argv[])
 
   for (i = 1; i < argc; i++)
   {
-    wd[i] = inotify_add_watch(fd, argv[i],
-                              IN_OPEN | IN_CLOSE);
+    wd[i] = inotify_add_watch(fd, argv[i], IN_ACCESS);
     if (wd[i] == -1)
     {
       fprintf(stderr, "Cannot watch '%s'\n", argv[i]);
