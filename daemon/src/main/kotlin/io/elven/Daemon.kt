@@ -5,9 +5,6 @@ import io.elven.download.Downloader
 import io.elven.download.DownloaderSettings
 import io.elven.settings.AnileafInternalData
 import io.elven.settings.DataFileHandler
-import java.io.File
-import java.lang.Thread.sleep
-import java.util.concurrent.atomic.AtomicInteger
 import kotlin.concurrent.fixedRateTimer
 
 class Daemon(basePath: String? = null) {
@@ -19,6 +16,7 @@ class Daemon(basePath: String? = null) {
     private val downloader = Downloader(settings)
 
     fun run() {
+        println("Started")
         fixedRateTimer(period = settings.syncFrequency.toLong() * 1000) {
             print(".")
             val currentList = anilist.sync()

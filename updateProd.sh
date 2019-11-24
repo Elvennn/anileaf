@@ -1,6 +1,6 @@
 #!/bin/sh
-
-$1/git checkout develop
-$1/git fetch
-$1/git reset --hard origin/develop
-animewatch/build.sh
+PATH=$1
+git checkout develop
+git fetch
+git reset --hard origin/develop
+animewatch/build.sh $1
