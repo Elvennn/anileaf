@@ -7,6 +7,7 @@ import com.jayway.jsonpath.spi.json.JacksonJsonProvider
 import com.jayway.jsonpath.spi.json.JsonProvider
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider
 import com.jayway.jsonpath.spi.mapper.MappingProvider
+import io.elven.anitomy.AnimeFile
 import io.elven.settings.AnileafInternalData
 import io.elven.settings.GlobalSettings
 import org.slf4j.Logger
@@ -57,6 +58,17 @@ class Anilist(settings: GlobalSettings, private val anileafData: AnileafInternal
                 arrayOf(Pair("mediaId", media.id), Pair("progress", progress))
             )
         )
+    }
+
+    fun updateAnime(animeFile: AnimeFile): Boolean {
+        val animes = sync()
+        val aniEntry = animes.firstOrNull { animeFile.maxRatioWith(it) }
+        if (aniEntry != null && animeFile.episode > aniEntry.progress) {
+            updateAnime(aniEntry.media, animeFile.episode)
+            println("${aniEntry.media.title.romaji} updated to episode ${animeFile.episode}")
+            return true
+        }
+        return false
     }
 
     init {

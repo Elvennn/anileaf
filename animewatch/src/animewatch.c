@@ -69,7 +69,7 @@ handle_events(int fd, int *wd, int argc, char *argv[])
       if (event->len)
         printf("%s\n", event->name);
 
-
+      fflush(stdout);
     }
   }
 }

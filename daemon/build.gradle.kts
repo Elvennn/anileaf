@@ -22,6 +22,7 @@ dependencies {
     compile(kotlin("stdlib-jdk8"))
     testImplementation("junit", "junit", "4.12")
     compile(project(":core"))
+    compile("org.jetbrains.kotlinx", "kotlinx-coroutines-core", "1.3.2")
 }
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> { kotlinOptions.jvmTarget = "11" }
 

@@ -3,6 +3,7 @@ package io.elven
 import io.elven.anilist.Anilist
 import io.elven.download.Downloader
 import io.elven.download.DownloaderSettings
+import io.elven.filewatch.FileWatch
 import io.elven.settings.AnileafInternalData
 import io.elven.settings.DataFileHandler
 import kotlin.concurrent.fixedRateTimer
@@ -16,7 +17,8 @@ class Daemon(basePath: String? = null) {
     private val downloader = Downloader(settings)
 
     fun run() {
-        println("Started")
+        println("Daemon Started")
+        FileWatch.start(anilist, settings)
         fixedRateTimer(period = settings.syncFrequency.toLong() * 1000) {
             val currentList = anilist.sync()
             downloader.downloadMatchingTorrents(currentList)
