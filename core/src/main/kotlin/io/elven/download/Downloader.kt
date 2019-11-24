@@ -44,7 +44,7 @@ class Downloader(private val settings: DownloaderSettings) {
                 transmission.downloadAnime(anime, torrent)
                 // TODO send notification
                 animeDownloadState.add(torrent.animeFile!!.episode)
-                println(torrent)
+                println("\n${torrent.fileName}")
             }
         }
 

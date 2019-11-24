@@ -25,7 +25,7 @@ class Daemon(basePath: String? = null) {
 
     fun run() {
         fixedRateTimer(period = settings.syncFrequency.toLong() * 1000) {
-            println("RUN SYNC")
+            print(".")
             val currentList = anilist.sync()
             downloader.downloadMatchingTorrents(currentList)
         }
