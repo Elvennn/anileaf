@@ -1,10 +1,5 @@
 package io.elven
 
-import com.den_4.inotify_java.EventQueueFull
-import com.den_4.inotify_java.Inotify
-import com.den_4.inotify_java.InotifyEvent
-import com.den_4.inotify_java.InotifyEventListener
-import com.den_4.inotify_java.enums.Event
 import io.elven.anilist.Anilist
 import io.elven.download.Downloader
 import io.elven.download.DownloaderSettings
@@ -33,6 +28,6 @@ class Daemon(basePath: String? = null) {
 
 }
 
-fun main (args : Array<String>) {
+fun main(args: Array<String>) {
     Daemon(args.getOrNull(0)).run()
 }

@@ -28,7 +28,12 @@ class CLI(private val args: Array<String>) {
         val downloaderSettings = DataFileHandler.load("settings.json", DownloaderSettings())
         val downloader = Downloader(downloaderSettings)
         val animeList = anilist.sync()
-        val torrentFeeds = animeList.map { "${downloaderSettings.torrentRSSFeed}+${it.media.title.romaji.toLowerCase().replace(" ", "+")}" }
+        val torrentFeeds = animeList.map {
+            "${downloaderSettings.torrentRSSFeed}+${it.media.title.romaji.toLowerCase().replace(
+                " ",
+                "+"
+            )}"
+        }
         downloader.downloadMatchingTorrents(animeList, *torrentFeeds.toTypedArray())
     }
 

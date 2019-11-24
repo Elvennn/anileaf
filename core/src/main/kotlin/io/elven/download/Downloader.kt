@@ -2,8 +2,6 @@ package io.elven.download
 
 import io.elven.anilist.AniEntry
 import io.elven.anitomy.AnimeFile
-import io.elven.settings.AnileafInternalData
-import me.xdrop.fuzzywuzzy.FuzzySearch
 import org.simpleframework.xml.core.Persister
 import java.io.File
 import java.net.URL
@@ -90,6 +88,7 @@ class Downloader(private val settings: DownloaderSettings) {
             prefFansub == "" || torrent.animeFile?.fansub == prefFansub
         }
 }
+
 fun <T> Sequence<T>.log(): Sequence<T> {
     println(this.joinToString("\n"));
     return this
