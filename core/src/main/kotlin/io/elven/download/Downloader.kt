@@ -2,6 +2,7 @@ package io.elven.download
 
 import io.elven.anilist.AniEntry
 import io.elven.anitomy.AnimeFile
+import io.elven.notification.NotificationService
 import org.simpleframework.xml.core.Persister
 import java.io.File
 import java.net.URL
@@ -10,6 +11,7 @@ class Downloader(private val settings: DownloaderSettings) {
     private val transmission = Transmission(settings)
     private val serializer = Persister()
     private val animeDownloadState: MutableMap<Int, MutableSet<Int>> = mutableMapOf()
+    private val notificationService = NotificationService()
 
     fun downloadMatchingTorrents(
         animeList: Array<AniEntry>,
@@ -40,9 +42,9 @@ class Downloader(private val settings: DownloaderSettings) {
             val animeDownloadState = animeDownloadState.getOrPut(anime.media.id) { mutableSetOf() }
             if (!animeDownloadState.contains(torrent.animeFile!!.episode)) {
                 transmission.downloadAnime(anime, torrent)
-                // TODO send notification
                 animeDownloadState.add(torrent.animeFile!!.episode)
-                println("\n${torrent.fileName}")
+                notificationService.notifyAnime(torrent.animeFile!!)
+                println(torrent.fileName)
             }
         }
 

@@ -50,3 +50,4 @@ out/
 ### Anileaf ###
 src/main/resources/token
 **/AnilistApp.kt
+**/NotificationCredentials.kt
