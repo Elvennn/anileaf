@@ -35,7 +35,7 @@ object FileWatch {
                 watchState.add(time)
                 if (watchState.done) {
                     watchStates.remove(fileName)
-                    anilist.updateAnime(AnimeFile.fromFileName(fileName)!!)
+                    anilist.updateAnime(AnimeFile.fromFileName(fileName))
                 }
             }
         }
@@ -43,7 +43,7 @@ object FileWatch {
     }
 }
 
-class AnimeWatchState(var lastTime: Int) {
+class AnimeWatchState(private var lastTime: Int) {
     private var duration: Int = 0
     val done get() = duration > 300
 

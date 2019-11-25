@@ -26,7 +26,7 @@ class Downloader(private val settings: DownloaderSettings) {
             .download()
     }
 
-    fun fetchTorrentFeed(torrentFeedUrl: String) =
+    private fun fetchTorrentFeed(torrentFeedUrl: String): TorrentFeed =
         serializer.read(TorrentFeed::class.java, URL(torrentFeedUrl).readText(), false)
 
     private fun Array<TorrentEntry>.filterAndMapTorrentEntries(animeList: Array<AniEntry>) =
@@ -68,7 +68,7 @@ class Downloader(private val settings: DownloaderSettings) {
                 animeFolder.list()
                     ?.none {
                         try {
-                            AnimeFile.fromFileName(it)?.episode == torrent.animeFile?.episode
+                            AnimeFile.fromFileName(it).episode == torrent.animeFile?.episode
                         } catch (e: Exception) {
                             false
                         }
@@ -92,6 +92,6 @@ class Downloader(private val settings: DownloaderSettings) {
 }
 
 fun <T> Sequence<T>.log(): Sequence<T> {
-    println(this.joinToString("\n"));
+    println(this.joinToString("\n"))
     return this
 }

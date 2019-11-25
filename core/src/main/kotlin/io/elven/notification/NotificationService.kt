@@ -20,7 +20,14 @@ class NotificationService {
     private fun send(message: String) {
         httpClient.sendAsync(
             HttpRequest.newBuilder()
-                .uri(URI.create("$notificationURL?user=${NotificationCredentials.user}&pass=${NotificationCredentials.pass}&msg=${URLEncoder.encode(message, "UTF-8")}"))
+                .uri(
+                    URI.create(
+                        "$notificationURL?user=${NotificationCredentials.user}&pass=${NotificationCredentials.pass}&msg=${URLEncoder.encode(
+                            message,
+                            "UTF-8"
+                        )}"
+                    )
+                )
                 .build(),
             HttpResponse.BodyHandlers.ofString()
         )

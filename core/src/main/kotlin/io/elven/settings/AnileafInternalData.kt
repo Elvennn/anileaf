@@ -30,4 +30,22 @@ class AnileafInternalData(private val basePathOverride: String? = null) {
 data class InternalData(
     var lastUpdate: Long = 0,
     var animeList: Array<AniEntry> = emptyArray()
-)
+) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as InternalData
+
+        if (lastUpdate != other.lastUpdate) return false
+        if (!animeList.contentEquals(other.animeList)) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = lastUpdate.hashCode()
+        result = 31 * result + animeList.contentHashCode()
+        return result
+    }
+}

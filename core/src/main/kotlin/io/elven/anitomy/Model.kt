@@ -30,7 +30,7 @@ data class AnimeFile(
             if (filename.trim() != "")
                 fromAnitomy(AnitomyJ.parse(filename))
             else
-                null
+                throw RuntimeException("Cannot parse anime file: $filename")
     }
 
     fun maxRatioWith(anime: AniEntry): Boolean {
