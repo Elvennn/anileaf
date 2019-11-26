@@ -1,3 +1,5 @@
 #!/bin/sh
 
-cp ./anileaf /usr/local/bin/
+mkdir -p /usr/share/anileaf && \
+cp cli/build/libs/cli-fat-*.jar /usr/share/anileaf/anileafCLI.jar && \
+cp anileaf /usr/bin/

@@ -1,4 +1,4 @@
 #!/bin/sh
 
-java -jar $HOME/workspace/anileaf/cli/build/libs/cli-fat-*.jar $@
+java -jar /usr/bin/anileaf/anileafCLI.jar $@
 

@@ -17,6 +17,7 @@ Anileaf is separated in 3 projects :
 to watch for watching episodes
 
 ### Daemon
+
 - Download new anime episodes using a Torrent RSS
 - Can send SMS notification when a new anime is downloaded 
 - Update anime list when an anime is watched
@@ -33,8 +34,8 @@ to watch for watching episodes
 
 ## Install
 
-DO A BETTER GRADLE JOB
+To build : `gradle fatJar`
 
-To build 
+To install the CLI use : `sudo ./installCLI.sh`
 
-To install CLI use : `sudo ./install`
+Using the daemon is a bit more complexe. You can use the `Dockerfile` as an example.
