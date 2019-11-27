@@ -9,7 +9,7 @@ import java.io.BufferedInputStream
 import kotlin.concurrent.thread
 
 object FileWatch {
-    private const val animeWatchExec = "./animewatch"
+    private const val animeWatchExec = "./animewatch" // TODO to settings
 
     fun start(anilist: Anilist, settings: DownloaderSettings) {
         val aniEntries = anilist.sync()

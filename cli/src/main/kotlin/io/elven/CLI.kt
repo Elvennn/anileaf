@@ -99,7 +99,6 @@ class CLI(private val args: Array<String>) {
         val animeArg: String? = args.getOrNull(1)
         anilist.sync()
         val animeEntry = if (animeArg.isNullOrBlank()) {
-            // TODO anime choice in list
             throw NotImplementedError()
         } else {
             parseAnimeArg(animeArg)
@@ -131,7 +130,6 @@ class CLI(private val args: Array<String>) {
         }
     }
 
-    // TODO verify best match
     private fun parseAnimeArg(animeArg: String): AniEntry {
         return anilist.sync().maxBy { it.media.title.partialMatch(animeArg) }
             ?: throw NoSuchElementException("Unable to find any currently watching anime for [$animeArg]")

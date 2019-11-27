@@ -11,9 +11,12 @@ class DownloaderSettings(
     val torrentRSSFeed: String = "",
     val transmissionURL: String = "",
     val transmissionCredentials: String = "",
+    val freeSmsNotificationUser: String = "",
+    val freeSmsNotificationPassword: String = "",
     val minVideoQuality: Array<String> = emptyArray(),
     val animeSettings: Array<AnimeSettings> = emptyArray()
-) : GlobalSettings(anilistUserName, anilistToken)
+) : GlobalSettings(anilistUserName, anilistToken) {
+}
 
 class AnimeSettings(
     val aniID: Int,

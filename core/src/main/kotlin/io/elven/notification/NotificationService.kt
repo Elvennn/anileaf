@@ -7,10 +7,9 @@ import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 
-class NotificationService {
+abstract class NotificationService {
     companion object {
         private val httpClient: HttpClient = HttpClient.newBuilder().build()
-        private const val notificationURL = "https://smsapi.free-mobile.fr/sendmsg"
     }
 
     fun notifyAnime(animeFile: AnimeFile) {
@@ -22,14 +21,13 @@ class NotificationService {
             HttpRequest.newBuilder()
                 .uri(
                     URI.create(
-                        "$notificationURL?user=${NotificationCredentials.user}&pass=${NotificationCredentials.pass}&msg=${URLEncoder.encode(
-                            message,
-                            "UTF-8"
-                        )}"
+                        createURI(message)
                     )
                 )
                 .build(),
             HttpResponse.BodyHandlers.ofString()
         )
     }
+
+    abstract fun createURI(message: String): String
 }
