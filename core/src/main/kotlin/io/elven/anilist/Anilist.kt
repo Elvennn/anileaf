@@ -23,18 +23,24 @@ class Anilist(settings: GlobalSettings, private val anileafData: AnileafInternal
 
     private val userName: String = settings.anilistUserName
     private val token: String = settings.anilistToken
-    private var logger: Logger
+    private var logger: Logger = LoggerFactory.getLogger(Anilist::class.java)
 
     fun sync(): Array<AniEntry> {
-        anileafData.data.animeList = getAnimeCurrentList()
+        anileafData.data.animeList = try {
+            getAnimeCurrentList()
+        } catch (exception: Exception) {
+            logger.error("UNABLE TO SYNC")
+            println("ENABLE TO SYNC")
+            emptyArray()
+        }
         anileafData.save()
         return anileafData.data.animeList
     }
 
     private fun get(query: GraphqlQuery): String {
-        logger.debug("${query.queryType} ${query.getQueryString()}")
+        logger.info("${query.queryType} ${query.getQueryString()}")
         val response = Graphql.query(ANILIST_API_URL, query, token)
-        logger.debug(response)
+        logger.info(response)
         return response
     }
 
@@ -72,8 +78,6 @@ class Anilist(settings: GlobalSettings, private val anileafData: AnileafInternal
     }
 
     init {
-        System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "INFO")
-        logger = LoggerFactory.getLogger(Anilist::class.java)
         Configuration.setDefaults(object : Configuration.Defaults {
 
             private val jsonProvider = JacksonJsonProvider()

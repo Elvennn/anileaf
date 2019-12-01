@@ -11,7 +11,6 @@ import kotlin.concurrent.fixedRateTimer
 class Daemon(basePath: String? = null) {
     private val settings = DataFileHandler.load("settings.json", DownloaderSettings(), basePath)
     private val anilist = Anilist(settings, AnileafInternalData(basePath))
-    private val isDebug: Boolean = System.getenv("ANILEAF_DEBUG")?.toBoolean() ?: false
 
     private val downloader = Downloader(settings)
 

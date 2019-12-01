@@ -6,8 +6,10 @@ import io.elven.settings.GlobalSettings
 class CLISettings(
     anilistUserName: String = "",
     anilistToken: String = "",
+    logLevel: String = "INFO",
+    logPath: String = "",
     val pathToAnimes: String = ""
-) : GlobalSettings(anilistUserName, anilistToken) {
+) : GlobalSettings(anilistUserName, anilistToken, logLevel, logPath) {
     companion object {
         private const val fileName = "settings.json"
         fun load(): CLISettings {

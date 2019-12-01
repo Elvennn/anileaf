@@ -150,6 +150,7 @@ class CLI(private val args: Array<String>) {
 }
 
 fun main(args: Array<String>) {
+    System.setProperty("org.slf4j.simpleLogger.logFile", "/tmp/truc")
     if (args.isEmpty()) {
         return
     }
