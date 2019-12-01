@@ -1,10 +1,8 @@
 package io.elven.notification
 
-import io.elven.anilist.Anilist
 import io.elven.anitomy.AnimeFile
 import org.slf4j.LoggerFactory
 import java.net.URI
-import java.net.URLEncoder
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse

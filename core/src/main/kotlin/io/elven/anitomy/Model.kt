@@ -2,7 +2,7 @@ package io.elven.anitomy
 
 import com.dgtlrepublic.anitomyj.AnitomyJ
 import com.dgtlrepublic.anitomyj.Element
-import io.elven.anilist.AniEntry
+import io.elven.anilist.AniMedia
 
 data class AnimeFile(
     val title: String,
@@ -33,12 +33,17 @@ data class AnimeFile(
                 throw RuntimeException("Cannot parse anime file: $filename")
     }
 
-    fun maxRatioWith(anime: AniEntry): Boolean {
-        val rawRatio = anime.media.title.match(title)
+    fun strictMatchTitle(anime: AniMedia): Boolean {
+        val rawRatio = anime.title.match(title)
         if (season != 1 && rawRatio >= 50) {
-            return titlesWithSeason().map { anime.media.title.match(it) }.max() == 100
+            return titlesWithSeason().map { anime.title.match(it) }.max() == 100
         }
-        return rawRatio > 95
+        return rawRatio >= 94
+    }
+
+    fun looseMatchTitle(anime: AniMedia): Boolean {
+        val rawRatio = anime.title.match(title)
+        return rawRatio >= 50
     }
 
     private fun titlesWithSeason() = setOf(

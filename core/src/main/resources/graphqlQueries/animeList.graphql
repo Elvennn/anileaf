@@ -19,6 +19,7 @@ fragment mediaListFragment on MediaList {
     episodes
     title {
       romaji(stylised: true)
+      english(stylised: true)
     }
   }
 }

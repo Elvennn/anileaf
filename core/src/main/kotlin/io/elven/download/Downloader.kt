@@ -53,7 +53,7 @@ class Downloader(private val settings: DownloaderSettings) {
 
     private fun Sequence<TorrentEntry>.filterAndMapAnimeWithinList(animeList: Array<AniEntry>) =
         this.mapNotNull { entry ->
-            val matchedAnime = animeList.firstOrNull { entry.animeFile?.maxRatioWith(it) ?: false }
+            val matchedAnime = animeList.firstOrNull { entry.animeFile?.strictMatchTitle(it.media) ?: false }
             if (matchedAnime != null) {
                 Pair(matchedAnime, entry)
             } else {

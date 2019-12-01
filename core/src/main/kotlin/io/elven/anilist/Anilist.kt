@@ -68,7 +68,7 @@ class Anilist(settings: GlobalSettings, private val anileafData: AnileafInternal
 
     fun updateAnime(animeFile: AnimeFile): Boolean {
         val animes = sync()
-        val aniEntry = animes.firstOrNull { animeFile.maxRatioWith(it) }
+        val aniEntry = animes.firstOrNull { animeFile.looseMatchTitle(it.media) }
         if (aniEntry != null && animeFile.episode > aniEntry.progress) {
             updateAnime(aniEntry.media, animeFile.episode)
             println("${aniEntry.media.title.romaji} updated to episode ${animeFile.episode}")
