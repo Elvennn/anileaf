@@ -104,12 +104,14 @@ class CLI(private val args: Array<String>) {
             parseAnimeArg(animeArg)
         }
 
-        val animeFile = findNextEpisode(animeEntry)
-        if (animeFile == null) {
-            print("No video files for ${animeEntry.media.title.romaji} episode ${animeEntry.progress + 1}.")
+        val animeEpisodeFile = findNextEpisode(animeEntry)
+        val prettyFileName = "${animeEntry.media.title.romaji} episode ${animeEntry.progress + 1}"
+        if (animeEpisodeFile == null) {
+            print("No video files for $prettyFileName.")
             return
         }
-        Desktop.getDesktop().open(animeFile)
+        println("Playing $prettyFileName")
+        Runtime.getRuntime().exec(arrayOf("sh", "-c", "vlc \"${animeEpisodeFile.absolutePath}\""))
     }
 
     fun sync() {
