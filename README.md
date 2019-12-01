@@ -19,15 +19,9 @@ To build use : `gradle fatJar`
 
 To install the CLI use : `sudo ./installCLI.sh`
 
-Using the daemon is a bit more complexe. You can use the `Dockerfile` as an example.
+Using the daemon is a bit more complex. You can use the `Dockerfile` as an example.
 
 ## Features
-
-Anileaf is separated in 4 projects :
-+ A Command Line Interface
-+ A Daemon running recurrent actions  
-+ A core library sharing common features 
-+ A C program which detetct watching episodes
 
 ### Daemon
 
@@ -48,7 +42,14 @@ Anileaf is separated in 4 projects :
 
 ## Technical details
 
+Anileaf is separated in 4 projects :
++ A Command Line Interface
++ A Daemon running recurrent actions  
++ A core library sharing common features 
++ A C program which detect watching episodes
+
+### Built using : 
 + Kotlin JVM (check each project gradle.build.kts for dependencies)
 + Access to Anilist.co GraphQL API
 + Linux's [Inotify](http://man7.org/linux/man-pages/man7/inotify.7.html)
-+ For SMS notifications use of French's ISP Free API 
++ SMS notifications using Free (French ISP) SMS API 
