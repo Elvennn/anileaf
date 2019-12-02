@@ -19,7 +19,7 @@ class Daemon(basePath: String? = null) {
         FileWatch.start(anilist, settings)
         fixedRateTimer(period = settings.syncFrequency.toLong() * 1000) {
             val currentList = anilist.sync()
-            downloader.downloadMatchingTorrents(currentList)
+            downloader.downloadMatchingTorrents(currentList, exactness = 90)
         }
     }
 }

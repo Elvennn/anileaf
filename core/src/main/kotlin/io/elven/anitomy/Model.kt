@@ -33,12 +33,12 @@ data class AnimeFile(
                 throw RuntimeException("Cannot parse anime file: $filename")
     }
 
-    fun strictMatchTitle(anime: AniMedia): Boolean {
+    fun strictMatchTitle(anime: AniMedia, cutoff: Int): Boolean {
         val rawRatio = anime.title.match(title)
         if (season != 1 && rawRatio >= 50) {
             return titlesWithSeason().map { anime.title.match(it) }.max() == 100
         }
-        return rawRatio >= 94
+        return rawRatio >= cutoff
     }
 
     fun looseMatchTitle(anime: AniMedia): Boolean {

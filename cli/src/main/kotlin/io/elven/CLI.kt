@@ -34,7 +34,7 @@ class CLI(private val args: Array<String>) {
                 "+"
             )}"
         }
-        downloader.downloadMatchingTorrents(animeList, *torrentFeeds.toTypedArray())
+        downloader.downloadMatchingTorrents(animeList, *torrentFeeds.toTypedArray(), exactness = 95)
     }
 
     fun init() {

@@ -18,23 +18,24 @@ class Downloader(private val settings: DownloaderSettings) {
 
     fun downloadMatchingTorrents(
         animeList: Array<AniEntry>,
-        vararg torrentFeedsUrl: String = arrayOf(settings.torrentRSSFeed)
+        vararg torrentFeedsUrl: String = arrayOf(settings.torrentRSSFeed),
+        exactness: Int
     ) {
         torrentFeedsUrl
             .map { fetchTorrentFeed(it).torrents }
             .flatten()
             .toSet()
             .toTypedArray()
-            .filterAndMapTorrentEntries(animeList)
+            .filterAndMapTorrentEntries(animeList, exactness)
             .download()
     }
 
     private fun fetchTorrentFeed(torrentFeedUrl: String): TorrentFeed =
         serializer.read(TorrentFeed::class.java, URL(torrentFeedUrl).readText(), false)
 
-    private fun Array<TorrentEntry>.filterAndMapTorrentEntries(animeList: Array<AniEntry>) =
+    private fun Array<TorrentEntry>.filterAndMapTorrentEntries(animeList: Array<AniEntry>, exactness: Int) =
         this.asSequence()
-            .filterAndMapAnimeWithinList(animeList)
+            .filterAndMapAnimeWithinList(animeList, exactness)
             .filterNeededEpisodes()
             .filterNotOwnedEpisodes()
             .filterVideoQuality()
@@ -51,9 +52,9 @@ class Downloader(private val settings: DownloaderSettings) {
             }
         }
 
-    private fun Sequence<TorrentEntry>.filterAndMapAnimeWithinList(animeList: Array<AniEntry>) =
+    private fun Sequence<TorrentEntry>.filterAndMapAnimeWithinList(animeList: Array<AniEntry>, exactness: Int) =
         this.mapNotNull { entry ->
-            val matchedAnime = animeList.firstOrNull { entry.animeFile?.strictMatchTitle(it.media) ?: false }
+            val matchedAnime = animeList.firstOrNull { entry.animeFile?.strictMatchTitle(it.media, exactness) ?: false }
             if (matchedAnime != null) {
                 Pair(matchedAnime, entry)
             } else {
