@@ -35,10 +35,10 @@ class Downloader(private val settings: DownloaderSettings) {
 
     private fun Array<TorrentEntry>.filterAndMapTorrentEntries(animeList: Array<AniEntry>, exactness: Int) =
         this.asSequence()
+            .filterVideoQuality()
             .filterAndMapAnimeWithinList(animeList, exactness)
             .filterNeededEpisodes()
             .filterNotOwnedEpisodes()
-            .filterVideoQuality()
             .filterFansubs()
 
     private fun Sequence<Pair<AniEntry, TorrentEntry>>.download() =
@@ -82,8 +82,8 @@ class Downloader(private val settings: DownloaderSettings) {
                 true
         }
 
-    private fun Sequence<Pair<AniEntry, TorrentEntry>>.filterVideoQuality() =
-        this.filter { (_, torrent) ->
+    private fun Sequence<TorrentEntry>.filterVideoQuality() =
+        this.filter { torrent ->
             settings.minVideoQuality.any { it == torrent.animeFile?.quality ?: "" }
         }
 

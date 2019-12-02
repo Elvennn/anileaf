@@ -16,6 +16,12 @@ data class AniMedia(val id: Int = -1, val title: AniTitle = AniTitle(), val epis
 }
 
 data class AniTitle(val romaji: String = "", val english: String = "") {
+    private val romajiWithoutSeason by lazy { getWithoutSeason(romaji) }
+    private val englishWithoutSeason by lazy { getWithoutSeason(english) }
+    val estimatedSeason by lazy { seasonRegex.find(romaji)?.value?.toIntOrNull() }
+
+    private fun getWithoutSeason(str: String) = str.replace(seasonRegex, "").trim()
+
     fun partialMatch(title: String) = max(
         FuzzySearch.partialRatio(romaji.toLowerCase(), title.toLowerCase()),
         FuzzySearch.partialRatio(english.toLowerCase(), title.toLowerCase())
@@ -25,4 +31,16 @@ data class AniTitle(val romaji: String = "", val english: String = "") {
         FuzzySearch.ratio(romaji.toLowerCase(), title.toLowerCase()),
         FuzzySearch.ratio(english.toLowerCase(), title.toLowerCase())
     )
+
+    fun matchWithoutSeason(title: String): Int {
+        val titleWithoutSeason = getWithoutSeason(title)
+        return max(
+            FuzzySearch.ratio(romajiWithoutSeason.toLowerCase(), titleWithoutSeason.toLowerCase()),
+            FuzzySearch.ratio(englishWithoutSeason.toLowerCase(), titleWithoutSeason.toLowerCase())
+        )
+    }
+
+    companion object {
+        private val seasonRegex = "[0-9]+$".toRegex()
+    }
 }

@@ -35,7 +35,10 @@ data class AnimeFile(
 
     fun strictMatchTitle(anime: AniMedia, cutoff: Int): Boolean {
         val rawRatio = anime.title.match(title)
-        if (season != 1 && rawRatio >= 50) {
+        if (rawRatio >= 50 && anime.title.estimatedSeason != null) {
+            if (season != 1 && season != anime.title.estimatedSeason) {
+                return false
+            }
             return titlesWithSeason().map { anime.title.match(it) }.max() == 100
         }
         return rawRatio >= cutoff
