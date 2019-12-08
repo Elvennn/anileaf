@@ -16,9 +16,10 @@ class Daemon(basePath: String? = null) {
 
     fun run() {
         println("Daemon Started")
-        FileWatch.start(anilist, settings)
+        val fileWatch = FileWatch(anilist, settings)
         fixedRateTimer(period = settings.syncFrequency.toLong() * 1000) {
             val currentList = anilist.sync()
+            fileWatch.start(currentList)
             downloader.downloadMatchingTorrents(currentList, exactness = 90)
         }
     }

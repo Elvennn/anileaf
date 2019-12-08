@@ -1,18 +1,22 @@
 package io.elven.filewatch
 
+import io.elven.anilist.AniEntry
 import io.elven.anilist.Anilist
 import io.elven.anitomy.AnimeFile
 import io.elven.download.DownloaderSettings
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.io.BufferedInputStream
 import kotlin.concurrent.thread
 
-object FileWatch {
-    private const val animeWatchExec = "./animewatch" // TODO to settings
+class FileWatch(private val anilist: Anilist, private val settings: DownloaderSettings) {
+    private val animeWatchExec = "./animewatch" // TODO to settings
+    private var job: Job? = null
+    private val watchStates = mutableMapOf<String, AnimeWatchState>()
 
-    fun start(anilist: Anilist, settings: DownloaderSettings) {
-        val aniEntries = anilist.sync()
+    fun start(aniEntries: Array<AniEntry>) {
+        job?.cancel()
         val process =
             Runtime.getRuntime().exec(
                 arrayOf(
@@ -25,8 +29,7 @@ object FileWatch {
             process.destroy()
         })
         val reader = BufferedInputStream(process.inputStream)
-        val watchStates = mutableMapOf<String, AnimeWatchState>()
-        GlobalScope.launch {
+        job = GlobalScope.launch {
             reader.bufferedReader().lines().forEach {
                 val data = it.split(Regex(";"), 2)
                 val fileName = data[1]
@@ -39,7 +42,6 @@ object FileWatch {
                 }
             }
         }
-        println("AnimeWatch Started")
     }
 }
 
