@@ -7,6 +7,8 @@ import io.elven.download.DownloaderSettings
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import java.io.BufferedInputStream
 import kotlin.concurrent.thread
 
@@ -34,6 +36,7 @@ class FileWatch(private val anilist: Anilist, private val settings: DownloaderSe
                 val data = it.split(Regex(";"), 2)
                 val fileName = data[1]
                 val time = data[0].toInt()
+                watchStates[fileName] ?: logger.info("Start Detecting $fileName")
                 val watchState = watchStates.getOrPut(fileName) { AnimeWatchState(time) }
                 watchState.add(time)
                 if (watchState.done) {
@@ -43,6 +46,10 @@ class FileWatch(private val anilist: Anilist, private val settings: DownloaderSe
             }
         }
     }
+
+    companion object {
+        private var logger: Logger = LoggerFactory.getLogger(FileWatch::class.java)
+    }
 }
 
 class AnimeWatchState(private var lastTime: Int) {
@@ -51,7 +58,7 @@ class AnimeWatchState(private var lastTime: Int) {
 
     fun add(time: Int) {
         val timeDiff = time - lastTime
-        if (timeDiff <= 5) {
+        if (timeDiff <= 20) {
             duration += timeDiff
         }
         lastTime = time

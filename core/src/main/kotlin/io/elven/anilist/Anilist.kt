@@ -19,11 +19,11 @@ class Anilist(settings: GlobalSettings, private val anileafData: AnileafInternal
 
     companion object {
         private const val ANILIST_API_URL = "https://graphql.anilist.co/"
+        private var logger: Logger = LoggerFactory.getLogger(Anilist::class.java)
     }
 
     private val userName: String = settings.anilistUserName
     private val token: String = settings.anilistToken
-    private var logger: Logger = LoggerFactory.getLogger(Anilist::class.java)
 
     fun sync(): Array<AniEntry> {
         anileafData.data.animeList = try {
