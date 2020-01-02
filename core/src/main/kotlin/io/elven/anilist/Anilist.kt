@@ -30,7 +30,7 @@ class Anilist(settings: GlobalSettings, private val anileafData: AnileafInternal
             getAnimeCurrentList()
         } catch (exception: Exception) {
             logger.error("UNABLE TO SYNC")
-            println("ENABLE TO SYNC")
+            println("UNABLE TO SYNC")
             emptyArray()
         }
         anileafData.save()
@@ -74,6 +74,7 @@ class Anilist(settings: GlobalSettings, private val anileafData: AnileafInternal
             println("${aniEntry.media.title.romaji} updated to episode ${animeFile.episode}")
             return true
         }
+        logger.info("Didn't update ${animeFile.title} episode ${animeFile.episode}")
         return false
     }
 

@@ -140,13 +140,13 @@ class CLI(private val args: Array<String>) {
     private fun findNextEpisode(animeEntry: AniEntry): File? {
         return File("${cliSettings.pathToAnimes}/${animeEntry.media.title.romaji}")
             .listFiles()
-            ?.firstOrNull { AnimeFile.fromAnitomy(AnitomyJ.parse(it.name)).episode == animeEntry.progress + 1 }
+            ?.firstOrNull { AnimeFile.fromFileName(it.name).episode == animeEntry.progress + 1 }
     }
 
     private fun findNextEpisodes(animeEntry: AniEntry): List<Pair<AnimeFile, File>>? {
         return File("${cliSettings.pathToAnimes}/${animeEntry.media.title.romaji}")
             .listFiles()
-            ?.map { Pair(AnimeFile.fromAnitomy(AnitomyJ.parse(it.name)), it) }
+            ?.map { Pair(AnimeFile.fromFileName(it.name), it) }
             ?.filter { (animeFile, _) -> animeFile.episode > animeEntry.progress }
     }
 }
