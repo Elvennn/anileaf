@@ -11,5 +11,6 @@ open class GlobalSettings(
         System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, logLevel)
         System.setProperty(org.slf4j.impl.SimpleLogger.LOG_FILE_KEY, logPath)
         System.setProperty(org.slf4j.impl.SimpleLogger.SHOW_DATE_TIME_KEY, true.toString())
+        System.setProperty(org.slf4j.impl.SimpleLogger.DATE_TIME_FORMAT_KEY, "dd/MM HH:mm :")
     }
 }
