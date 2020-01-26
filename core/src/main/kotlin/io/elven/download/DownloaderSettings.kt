@@ -7,8 +7,9 @@ class DownloaderSettings(
     anilistToken: String = "",
     logLevel: String = "DEBUG",
     logPath: String = "",
+    pathToAnimes: String = "",
     val syncFrequency: Int = 3000,
-    val pathToAnimes: String = "",
+    val pathToAnimeWatchExec: String = "",
     val pathToDownloadAnimes: String = "",
     val torrentRSSFeed: String = "",
     val transmissionURL: String = "",
@@ -17,7 +18,7 @@ class DownloaderSettings(
     val freeSmsNotificationPassword: String = "",
     val minVideoQuality: Array<String> = emptyArray(),
     val animeSettings: Array<AnimeSettings> = emptyArray()
-) : GlobalSettings(anilistUserName, anilistToken, logLevel, logPath) {
+) : GlobalSettings(anilistUserName, anilistToken, logLevel, logPath, pathToAnimes) {
 }
 
 class AnimeSettings(

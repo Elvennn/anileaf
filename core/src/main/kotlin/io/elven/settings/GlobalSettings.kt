@@ -5,7 +5,8 @@ open class GlobalSettings(
     var anilistUserName: String,
     var anilistToken: String,
     val logLevel: String,
-    val logPath: String
+    val logPath: String,
+    val pathToAnimes: String = ""
 ) {
     init {
         System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, logLevel)

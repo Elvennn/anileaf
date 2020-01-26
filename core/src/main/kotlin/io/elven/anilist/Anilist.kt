@@ -38,9 +38,7 @@ class Anilist(settings: GlobalSettings, private val anileafData: AnileafInternal
     }
 
     private fun get(query: GraphqlQuery): String {
-        logger.info("${query.queryType} ${query.getQueryString()}")
         val response = Graphql.query(ANILIST_API_URL, query, token)
-        logger.info(response)
         return response
     }
 

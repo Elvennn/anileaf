@@ -3,17 +3,17 @@ package io.elven.filewatch
 import io.elven.anilist.AniEntry
 import io.elven.anilist.Anilist
 import io.elven.anitomy.AnimeFile
-import io.elven.download.DownloaderSettings
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.BufferedInputStream
 import kotlin.concurrent.thread
 
-class FileWatch(private val anilist: Anilist, private val settings: DownloaderSettings) {
-    private val animeWatchExec = "./animewatch" // TODO to settings
+class AnimeWatch(
+    private val animeWatchExec: String,
+    private val anilist: Anilist,
+    private val pathToAnimes: String
+) {
     private var job: Job? = null
     private val watchStates = mutableMapOf<String, AnimeWatchState>()
 
@@ -23,7 +23,7 @@ class FileWatch(private val anilist: Anilist, private val settings: DownloaderSe
             Runtime.getRuntime().exec(
                 arrayOf(
                     animeWatchExec,
-                    *aniEntries.map { "${settings.pathToAnimes}/${it.media.title.romaji}" }.toTypedArray()
+                    *aniEntries.map { "${pathToAnimes}/${it.media.title.romaji}" }.toTypedArray()
                 )
             )
         // Always exit process
@@ -31,15 +31,22 @@ class FileWatch(private val anilist: Anilist, private val settings: DownloaderSe
             process.destroy()
         })
         val reader = BufferedInputStream(process.inputStream)
-        job = GlobalScope.launch {
-            reader.bufferedReader().lines().forEach {
-                val data = it.split(Regex(";"), 2)
+        job = GlobalScope.launch(Dispatchers.IO) {
+            while (true) {
+                val line = reader.bufferedReader().readLine()
+                if (!coroutineContext.isActive) {
+                    return@launch
+                }
+                val data = line.split(Regex(";"), 2)
                 val fileName = data[1]
                 val time = data[0].toInt()
-                watchStates[fileName] ?: logger.info("Start Detecting $fileName")
+                if (fileName.endsWith(".part"))
+                    continue
+                watchStates[fileName] ?: logger.info("Detecting $fileName")
                 val watchState = watchStates.getOrPut(fileName) { AnimeWatchState(time) }
                 watchState.add(time)
                 if (watchState.done) {
+                    logger.info("$fileName watched. Updating anilist")
                     watchStates.remove(fileName)
                     anilist.updateAnime(AnimeFile.fromFileName(fileName))
                 }
@@ -48,7 +55,7 @@ class FileWatch(private val anilist: Anilist, private val settings: DownloaderSe
     }
 
     companion object {
-        private var logger: Logger = LoggerFactory.getLogger(FileWatch::class.java)
+        private var logger: Logger = LoggerFactory.getLogger(AnimeWatch::class.java)
     }
 }
 
