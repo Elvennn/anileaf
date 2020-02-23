@@ -124,7 +124,7 @@ class CLI(private val args: Array<String>) {
             args.getOrNull(2)?.toInt() ?: throw NoSuchElementException("Missing anime progress argument")
 
         val parsedAnime = parseAnimeArg(animeArg)
-        println("Updating ${parsedAnime.media.title.romaji} ? (Y/n)")
+        println("Updating ${parsedAnime.media.title.romaji} episode from ${parsedAnime.progress} to $progress ? (Y/n)")
         val answer = readLine()
         if (answer == null || answer == "" || answer.toLowerCase() == "y") {
             anilist.updateAnime(parsedAnime.media, progress)

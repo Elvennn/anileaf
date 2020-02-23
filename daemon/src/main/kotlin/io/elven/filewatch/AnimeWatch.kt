@@ -32,9 +32,9 @@ class AnimeWatch(
         })
         val reader = BufferedInputStream(process.inputStream)
         job = GlobalScope.launch(Dispatchers.IO) {
-            while (true) {
+            while (this.isActive) {
                 val line = reader.bufferedReader().readLine()
-                if (!coroutineContext.isActive) {
+                if (!this.isActive) {
                     return@launch
                 }
                 val data = line.split(Regex(";"), 2)
@@ -65,9 +65,13 @@ class AnimeWatchState(private var lastTime: Int) {
 
     fun add(time: Int) {
         val timeDiff = time - lastTime
-        if (timeDiff <= 20) {
+        if (timeDiff <= maxTimeToCount) {
             duration += timeDiff
         }
         lastTime = time
+    }
+
+    companion object {
+        private const val maxTimeToCount = 20
     }
 }
