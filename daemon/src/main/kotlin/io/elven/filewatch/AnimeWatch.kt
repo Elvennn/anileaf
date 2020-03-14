@@ -8,6 +8,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.BufferedInputStream
 import kotlin.concurrent.thread
+import kotlin.math.log
 
 class AnimeWatch(
     private val animeWatchExec: String,
@@ -38,17 +39,21 @@ class AnimeWatch(
                     return@launch
                 }
                 val data = line.split(Regex(";"), 2)
-                val fileName = data[1]
-                val time = data[0].toInt()
-                if (fileName.endsWith(".part"))
-                    continue
-                watchStates[fileName] ?: logger.info("Detecting $fileName")
-                val watchState = watchStates.getOrPut(fileName) { AnimeWatchState(time) }
-                watchState.add(time)
-                if (watchState.done) {
-                    logger.info("$fileName watched. Updating anilist")
-                    watchStates.remove(fileName)
-                    anilist.updateAnime(AnimeFile.fromFileName(fileName))
+                try {
+                    val fileName = data[1]
+                    val time = data[0].toInt()
+                    if (fileName.endsWith(".part"))
+                        continue
+                    watchStates[fileName] ?: logger.info("Detecting $fileName")
+                    val watchState = watchStates.getOrPut(fileName) { AnimeWatchState(time) }
+                    watchState.add(time)
+                    if (watchState.done) {
+                        logger.info("$fileName watched. Updating anilist")
+                        watchStates.remove(fileName)
+                        anilist.updateAnime(AnimeFile.fromFileName(fileName))
+                    }
+                } catch (e : Exception) {
+                    logger.error("Error: unable to handle anime watch data ${data.joinToString()}")
                 }
             }
         }
