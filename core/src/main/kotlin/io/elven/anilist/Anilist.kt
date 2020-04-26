@@ -38,8 +38,7 @@ class Anilist(settings: GlobalSettings, private val anileafData: AnileafInternal
     }
 
     private fun get(query: GraphqlQuery): String {
-        val response = Graphql.query(ANILIST_API_URL, query, token)
-        return response
+        return Graphql.query(ANILIST_API_URL, query, token)
     }
 
     private fun getAnimeCurrentList(): Array<AniEntry> {

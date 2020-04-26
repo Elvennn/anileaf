@@ -6,9 +6,7 @@ import io.elven.anitomy.AnimeFile
 import kotlinx.coroutines.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.io.BufferedInputStream
 import kotlin.concurrent.thread
-import kotlin.math.log
 
 class AnimeWatch(
     private val animeWatchExec: String,
@@ -24,19 +22,22 @@ class AnimeWatch(
             Runtime.getRuntime().exec(
                 arrayOf(
                     animeWatchExec,
-                    *aniEntries.map { "${pathToAnimes}/${it.media.title.romaji}" }.toTypedArray()
+                    *aniEntries.map { "$pathToAnimes/${it.media.title.romaji}" }.toTypedArray()
                 )
             )
         // Always exit process
         Runtime.getRuntime().addShutdownHook(thread(false) {
             process.destroy()
         })
-        val reader = BufferedInputStream(process.inputStream)
+        val reader = process.inputStream.buffered().bufferedReader()
         job = GlobalScope.launch(Dispatchers.IO) {
             while (this.isActive) {
-                val line = reader.bufferedReader().readLine()
+                val line = reader.readLine()
                 if (!this.isActive) {
                     return@launch
+                }
+                if (line == null) {
+                    continue
                 }
                 val data = line.split(Regex(";"), 2)
                 try {
@@ -52,8 +53,8 @@ class AnimeWatch(
                         watchStates.remove(fileName)
                         anilist.updateAnime(AnimeFile.fromFileName(fileName))
                     }
-                } catch (e : Exception) {
-                    logger.error("Error: unable to handle anime watch data ${data.joinToString()}")
+                } catch (e: Exception) {
+                    logger.error("Error: unable to handle anime watch data")
                 }
             }
         }

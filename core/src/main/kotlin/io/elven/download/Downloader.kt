@@ -6,7 +6,6 @@ import io.elven.notification.FreeNotificationService
 import org.simpleframework.xml.core.Persister
 import java.io.File
 import java.net.URL
-
 class Downloader(private val settings: DownloaderSettings) {
     private val transmission = Transmission(settings)
     private val serializer = Persister()
@@ -22,7 +21,7 @@ class Downloader(private val settings: DownloaderSettings) {
         exactness: Int
     ) {
         torrentFeedsUrl
-            .map { fetchTorrentFeed(it).torrents }
+            .mapNotNull { fetchTorrentFeed(it)?.torrents }
             .flatten()
             .toSet()
             .toTypedArray()
@@ -30,8 +29,12 @@ class Downloader(private val settings: DownloaderSettings) {
             .download()
     }
 
-    private fun fetchTorrentFeed(torrentFeedUrl: String): TorrentFeed =
-        serializer.read(TorrentFeed::class.java, URL(torrentFeedUrl).readText(), false)
+    private fun fetchTorrentFeed(torrentFeedUrl: String): TorrentFeed? =
+        try {
+            serializer.read(TorrentFeed::class.java, URL(torrentFeedUrl).readText(), false)
+        } catch (e: java.lang.Exception) {
+            null
+        }
 
     private fun Array<TorrentEntry>.filterAndMapTorrentEntries(animeList: Array<AniEntry>, exactness: Int) =
         this.asSequence()
@@ -94,6 +97,7 @@ class Downloader(private val settings: DownloaderSettings) {
             prefFansub == "" || torrent.animeFile?.fansub == prefFansub
         }
 }
+
 
 fun <T> Sequence<T>.log(): Sequence<T> {
     println(this.joinToString("\n"))

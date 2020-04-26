@@ -7,7 +7,7 @@ class CLISettings(
     anilistUserName: String = "",
     anilistToken: String = "",
     logLevel: String = "INFO",
-    logPath: String = ""
+    logPath: String = "/tmp/anileaf.log"
 ) : GlobalSettings(anilistUserName, anilistToken, logLevel, logPath) {
     companion object {
         private const val fileName = "settings.json"
