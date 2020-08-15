@@ -28,7 +28,7 @@ class CLI(private val args: Array<String>) {
         val downloader = Downloader(downloaderSettings)
         val animeList = anilist.sync()
         val torrentFeeds = animeList.map {
-            "${downloaderSettings.torrentRSSFeed}+${it.media.title.romaji.toLowerCase().replace(
+            "${downloaderSettings.torrentRSSFeed}+${it.media.title.english.toLowerCase().replace(
                 " ",
                 "+"
             )}"
